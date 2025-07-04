@@ -14,7 +14,7 @@ export default function LatestArrivalsSection() {
   const smallCategories = ['Shirts', 'Jackets', 'Trousers'];
 
   return (
-    <section className="relative w-full md:w-[98%] overflow-hidden rounded-l-none sm:rounded-l-3xl ml-0 sm:ml-auto">
+    <section className="relative w-full bg-[rgb(240,230,210)] md:w-[98%] overflow-hidden rounded-l-none sm:rounded-l-3xl ml-0 sm:ml-auto">
       {/* Background Image */}
       <div 
         className="absolute inset-0 bg-cover bg-top z-0 rounded-l-none sm:rounded-l-3xl"
@@ -38,7 +38,7 @@ export default function LatestArrivalsSection() {
 
       <div className="relative z-10 flex flex-col justify-center items-center min-h-[40vh] xs:min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] w-full px-4 sm:px-6 py-6 sm:py-10 md:py-16">
         {/* Heading */}
-        <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-10 sm:mb-14 text-center drop-shadow-2xl">
+        <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-[rgb(240,230,210)] mb-10 sm:mb-14 text-center drop-shadow-2xl">
           Latest Arrivals
         </h2>
 
@@ -50,8 +50,8 @@ export default function LatestArrivalsSection() {
               onClick={() => setActiveCategory(category)}
               className={`text-base font-serif tracking-wide transition-all duration-300 relative pb-1 ${
                 activeCategory === category
-                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
-                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
+                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
+                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
               }`}
             >
               {category}
@@ -67,8 +67,8 @@ export default function LatestArrivalsSection() {
               onClick={() => setActiveCategory(category)}
               className={`text-lg font-serif tracking-wide transition-all duration-300 relative pb-1 ${
                 activeCategory === category
-                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
-                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
+                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
+                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
               }`}
             >
               {category}
@@ -84,8 +84,8 @@ export default function LatestArrivalsSection() {
               onClick={() => setActiveCategory(category)}
               className={`text-xl lg:text-2xl font-serif tracking-wide transition-all duration-300 relative pb-1 ${
                 activeCategory === category
-                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
-                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
+                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
+                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
               }`}
             >
               {category}

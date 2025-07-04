@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white relative overflow-hidden">
+    <footer className="bg-black relative overflow-hidden">
       {/* Subtle gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-gray-900 opacity-50"></div>
       
@@ -19,12 +19,12 @@ export default function Footer() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <h2 className="text-4xl font-light mb-4 tracking-tight">
-                  <span className="text-white">Shah</span>
-                  <span className="font-semibold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Bazar</span>
+                <h2 className="text-4xl mb-4 tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <span style={{ color: 'rgb(240, 230, 210)' }}>Shah</span>
+                  <span className="font-bold bg-gradient-to-r from-[rgb(240,230,210)] to-[rgb(220,210,190)] bg-clip-text text-transparent">Bazar</span>
                 </h2>
                 
-                <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-sm">
+                <p className="text-sm leading-relaxed mb-10 max-w-sm" style={{ color: 'rgba(240, 230, 210, 0.7)', fontFamily: "'Montserrat', sans-serif" }}>
                   Crafting exceptional shopping experiences with timeless elegance and modern innovation.
                 </p>
                 
@@ -46,7 +46,7 @@ export default function Footer() {
                       animate={{ opacity: 1, y: 0 }}
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <div className="text-gray-400 group-hover:text-white transition-colors duration-300">
+                      <div style={{ color: 'rgba(240, 230, 210, 0.7)' }} className="group-hover:text-[rgb(240,230,210)] transition-colors duration-300">
                         <SocialIcon platform={platform.name} />
                       </div>
                       <div className="absolute inset-0 rounded-full bg-gradient-to-r from-gray-600 to-gray-400 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
@@ -63,7 +63,8 @@ export default function Footer() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-semibold text-gray-300 flex items-center gap-2">
+                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-bold flex items-center gap-2" 
+                    style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(240, 230, 210)' }}>
                   <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                   Shop
                 </h3>
@@ -72,7 +73,8 @@ export default function Footer() {
                     <li key={item}>
                       <motion.a 
                         href="#" 
-                        className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-light tracking-wide hover:translate-x-1 inline-block"
+                        className="hover:text-[rgb(240,230,210)] transition-all duration-300 text-sm tracking-wide hover:translate-x-1 inline-block"
+                        style={{ color: 'rgba(240, 230, 210, 0.7)', fontFamily: "'Montserrat', sans-serif" }}
                         whileHover={{ x: 4 }}
                         transition={{ type: "tween", duration: 0.2 }}
                       >
@@ -88,7 +90,8 @@ export default function Footer() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-semibold text-gray-300 flex items-center gap-2">
+                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-bold flex items-center gap-2"
+                    style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(240, 230, 210)' }}>
                   <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                   Company
                 </h3>
@@ -97,7 +100,8 @@ export default function Footer() {
                     <li key={item}>
                       <motion.a 
                         href="#" 
-                        className="text-gray-400 hover:text-white transition-all duration-300 text-sm font-light tracking-wide hover:translate-x-1 inline-block"
+                        className="hover:text-[rgb(240,230,210)] transition-all duration-300 text-sm tracking-wide hover:translate-x-1 inline-block"
+                        style={{ color: 'rgba(240, 230, 210, 0.7)', fontFamily: "'Montserrat', sans-serif" }}
                         whileHover={{ x: 4 }}
                         transition={{ type: "tween", duration: 0.2 }}
                       >
@@ -113,7 +117,8 @@ export default function Footer() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-semibold text-gray-300 flex items-center gap-2">
+                <h3 className="text-xs uppercase tracking-[0.2em] mb-8 font-bold flex items-center gap-2"
+                    style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(240, 230, 210)' }}>
                   <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                   Support
                 </h3>
@@ -122,7 +127,8 @@ export default function Footer() {
                     <li key={item}>
                       <motion.a 
                         href="#" 
-                        className="text-gray-400 hover:text-white transition-all duration-300 text-small font-light tracking-wide hover:translate-x-1 inline-block"
+                        className="hover:text-[rgb(240,230,210)] transition-all duration-300 text-sm tracking-wide hover:translate-x-1 inline-block"
+                        style={{ color: 'rgba(240, 230, 210, 0.7)', fontFamily: "'Montserrat', sans-serif" }}
                         whileHover={{ x: 4 }}
                         transition={{ type: "tween", duration: 0.2 }}
                       >
@@ -143,16 +149,17 @@ export default function Footer() {
             transition={{ duration: 0.8, delay: 0.6 }}
           >
             <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-              <div className="text-xs text-gray-500 tracking-wide">
+              <div className="text-xs tracking-wide" style={{ color: 'rgba(240, 230, 210, 0.5)', fontFamily: "'Montserrat', sans-serif" }}>
                 © 2025 ShahBazar. All rights reserved.
               </div>
               
-              <div className="flex gap-8 text-xs text-gray-500">
+              <div className="flex gap-8 text-xs">
                 {['Privacy', 'Terms', 'Cookies'].map((item) => (
                   <motion.a 
                     key={item}
                     href="#" 
-                    className="hover:text-gray-300 transition-colors duration-300 tracking-wide"
+                    className="hover:text-[rgb(240,230,210)] transition-colors duration-300 tracking-wide"
+                    style={{ color: 'rgba(240, 230, 210, 0.5)', fontFamily: "'Montserrat', sans-serif" }}
                     whileHover={{ y: -1 }}
                     transition={{ type: "tween", duration: 0.2 }}
                   >

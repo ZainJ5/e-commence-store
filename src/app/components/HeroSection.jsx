@@ -6,11 +6,9 @@ import GallerySection from './GallerySection';
 export default function HeroSection() {
   return (
     <>
-    {/* Combined hero section with wave transition */}
     <div className="relative w-full overflow-hidden" style={{ height: 'calc(100vh + 120px)' }}>
       <Navbar />
 
-      {/* Background image for entire section */}
       <div className="absolute inset-0 w-full h-full">
         <img 
           src="/hero-section-mobile.jpg" 
@@ -25,21 +23,20 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-black/50"></div>
       </div>
 
-      {/* Hero content */}
       <div className="relative h-screen flex flex-col justify-center items-center text-center pt-20">
         <div className="max-w-5xl mx-auto px-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-amber-300 mb-6 font-light">
+          <p className="text-xs uppercase tracking-[0.3em] text-emerald-400 mb-6 font-light">
             Couture Collection
           </p>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-thin leading-[0.9] text-white mb-8 tracking-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl font-thin leading-[0.9] mb-8 tracking-tight" style={{ color: 'rgb(240, 230, 210)' }}>
             Timeless
             <br />
             <span className="font-extralight italic">Elegance</span>
           </h1>
-          <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto mb-12 font-light leading-relaxed">
+          <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-12 font-light leading-relaxed" style={{ color: 'rgba(240, 230, 210, 0.9)' }}>
             Where sophistication meets artistry
           </p>
-          <button className="bg-transparent border border-white/30 text-white px-12 py-4 font-light text-lg tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 backdrop-blur-sm">
+          <button className="bg-transparent border border-emerald-400/30 px-12 py-4 font-light text-lg tracking-wider uppercase hover:bg-emerald-700 transition-all duration-500 backdrop-blur-sm" style={{ color: 'rgb(240, 230, 210)' }}>
             Explore Collection
           </button>
         </div>
@@ -59,7 +56,7 @@ export default function HeroSection() {
               <path d="M0,0 L1360,0 L1360,40 C1020,80 680,100 340,80 C170,70 85,50 0,50 Z" fill="black"/>
             </mask>
           </defs>
-          <rect width="1360" height="120" fill="white" mask="url(#waveMask)"/>
+          <rect width="1360" height="120" fill="rgb(240,230,210)" mask="url(#waveMask)"/>
         </svg>
       </div>
     </div>

@@ -96,7 +96,7 @@ export default function ProductsSection() {
   };
 
   return (
-    <section className="bg-neutral-100 py-16 px-6 relative">
+    <section className="py-16 px-6 relative" style={{ backgroundColor: 'rgb(240, 230, 210)' }}>
       <div className="absolute top-0 left-0 right-0 h-[30px] -mt-[30px] overflow-hidden">
         <svg 
           viewBox="0 0 1360 30" 
@@ -104,21 +104,23 @@ export default function ProductsSection() {
           className="w-full h-full block"
           preserveAspectRatio="none"
         >
-          <path d="M0,30 C85,25 170,15 340,10 C680,0 1020,15 1360,30 L1360,30 L0,30 Z" fill="rgb(243, 244, 246)"/>
+          <path d="M0,30 C85,25 170,15 340,10 C680,0 1020,15 1360,30 L1360,30 L0,30 Z" fill="rgb(240, 230, 210)"/>
         </svg>
       </div>
       
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mb-12">
           <div className="mb-4 md:mb-0">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold" 
+                style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(16, 81, 64)' }}>
               Latest Collection
             </h2>
-            <p className="text-gray-600 mt-2">Explore our newest fashion arrivals</p>
+            <p className="mt-2" style={{ color: 'rgb(16, 81, 64, 0.7)' }}>Explore our newest fashion arrivals</p>
           </div>
           <Link 
             href="/collections" 
-            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-emerald-800 hover:bg-emerald-900 transition-all"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-base font-bold rounded-md text-white bg-emerald-700 hover:bg-emerald-800 transition-all"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             View All Collections 
             <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -129,7 +131,7 @@ export default function ProductsSection() {
 
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-800"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-700"></div>
           </div>
         ) : error ? (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -161,7 +163,7 @@ export default function ProductsSection() {
                   
                   {/* Discount Badge */}
                   {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                    <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
+                    <div className="absolute top-3 left-3 bg-emerald-700 text-white text-xs font-bold px-2 py-1 rounded-md">
                       {calculateDiscount(product.originalPrice, product.discountedPrice)}
                     </div>
                   )}
@@ -172,7 +174,7 @@ export default function ProductsSection() {
                     className="absolute top-3 right-3 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all"
                   >
                     <svg 
-                      className={`w-5 h-5 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-800'}`} 
+                      className={`w-5 h-5 ${wishlist.includes(product._id) ? 'text-emerald-700 fill-current' : 'text-gray-800'}`} 
                       fill={wishlist.includes(product._id) ? 'currentColor' : 'none'} 
                       stroke="currentColor" 
                       viewBox="0 0 24 24" 
@@ -185,7 +187,8 @@ export default function ProductsSection() {
                   {/* Quick View */}
                   <Link 
                     href={`/products/${product._id}`}
-                    className="absolute bottom-3 left-3 right-3 bg-black/75 text-white text-center py-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    className="absolute bottom-3 left-3 right-3 bg-emerald-700/85 text-white text-center py-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    style={{ fontFamily: "'Montserrat', sans-serif" }}
                   >
                     Quick View
                   </Link>
@@ -194,8 +197,10 @@ export default function ProductsSection() {
                 {/* Product Info */}
                 <div className="p-4">
                   <div className="mb-2">
-                    <h3 className="text-lg font-medium text-gray-900 truncate">{product.name}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{product.category || 'Fashion'} • {getAvailableSizes(product)}</p>
+                    <h3 className="text-lg font-bold text-emerald-900 truncate" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-emerald-800/70 mt-1">{product.category || 'Fashion'} • {getAvailableSizes(product)}</p>
                   </div>
                   
                   <div className="flex items-center justify-between">
@@ -206,14 +211,14 @@ export default function ProductsSection() {
                           <span className="text-emerald-700 font-bold">{formatPrice(product.discountedPrice)}</span>
                         </>
                       ) : (
-                        <span className="text-gray-900 font-bold">{formatPrice(product.originalPrice)}</span>
+                        <span className="text-emerald-800 font-bold">{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     
                     <button 
                       onClick={() => addToCart(product)}
                       aria-label="Add to cart"
-                      className="w-10 h-10 rounded-full bg-emerald-800 hover:bg-emerald-900 text-white flex items-center justify-center transition-all"
+                      className="w-10 h-10 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white flex items-center justify-center transition-all"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -235,20 +240,20 @@ export default function ProductsSection() {
         
         {products.length > 0 && (
           <div className="flex justify-center mt-10">
-            <div className="inline-flex bg-gray-200 rounded-full p-1">
-              <div className="h-2 w-8 bg-emerald-800 rounded-full"></div>
-              <div className="h-2 w-2 bg-gray-300 rounded-full mx-1"></div>
-              <div className="h-2 w-2 bg-gray-300 rounded-full"></div>
+            <div className="inline-flex bg-emerald-100 rounded-full p-1">
+              <div className="h-2 w-8 bg-emerald-700 rounded-full"></div>
+              <div className="h-2 w-2 bg-emerald-200 rounded-full mx-1"></div>
+              <div className="h-2 w-2 bg-emerald-200 rounded-full"></div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-[30px]">
+      {/* <div className="absolute bottom-0 left-0 right-0 h-[30px]">
         <svg viewBox="0 0 1360 30" xmlns="http://www.w3.org/2000/svg">
           <path d="M0,0 C85,5 170,15 340,20 C680,30 1020,15 1360,0 L1360,30 L0,30 Z" fill="white"/>
         </svg>
-      </div>
+      </div> */}
     </section>
   );
 }

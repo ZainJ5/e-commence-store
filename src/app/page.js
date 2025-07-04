@@ -8,7 +8,7 @@ import HolidaySaleBanner from './components/HolidaySaleBanner';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen  bg-[rgb(240,230,210)]">
       <Navbar />
       <HeroSection />
       {/* <GallerySection/> */}
