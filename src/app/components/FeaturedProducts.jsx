@@ -124,17 +124,16 @@ export default function PremiumCarousel() {
           <span className="sr-only">Next</span>
         </button>
         
-        {/* Carousel container - maintaining full height across all devices */}
+        {/* Carousel container - now transparent with no visible box */}
         <motion.div 
-          className="relative h-[700px] overflow-hidden rounded-3xl"
-          style={{ background: 'linear-gradient(to bottom, rgb(240, 230, 210), rgb(220, 210, 190))' }}
+          className="relative h-[700px] overflow-hidden"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Added transition animation for carousel background */}
+          {/* Added transition animation for carousel background - now transparent */}
           <motion.div
             className="absolute inset-0"
             key={`bg-${activeIndex}`}
@@ -142,7 +141,7 @@ export default function PremiumCarousel() {
             animate={{ opacity: 1 }}
             transition={{ duration: 1 }}
             style={{ 
-              backgroundImage: `radial-gradient(circle at ${50 + direction * 10}% 50%, rgba(240,230,210,0.2), rgba(220,210,190,0.4))`,
+              backgroundImage: `radial-gradient(circle at ${50 + direction * 10}% 50%, rgba(240,230,210,0), rgba(220,210,190,0))`,
             }}
           />
           
