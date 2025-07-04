@@ -648,9 +648,9 @@ export default function AdminPortal() {
                           </div>
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-emerald-800">${product.originalPrice}</div>
+                          <div className="text-sm text-emerald-800">Rs {product.originalPrice}</div>
                           {product.discountedPrice && (
-                            <div className="text-sm text-emerald-500">${product.discountedPrice} (Sale)</div>
+                            <div className="text-sm text-emerald-500">Rs {product.discountedPrice} (Sale)</div>
                           )}
                         </td>
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-emerald-600">
