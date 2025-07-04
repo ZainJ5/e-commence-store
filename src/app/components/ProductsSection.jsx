@@ -45,7 +45,7 @@ export default function ProductsSection() {
   }, []);
 
   const formatPrice = (price) => {
-    return `$${Number(price).toFixed(2)}`;
+    return `Rs${Number(price).toFixed(2)}`;
   };
   
   const calculateDiscount = (original, discounted) => {
