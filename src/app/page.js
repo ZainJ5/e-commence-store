@@ -1,4 +1,5 @@
 import Navbar from './components/Navbar';
+import TopDiscountBanner from './components/DiscountSection';
 import HeroSection from './components/HeroSection';
 import ProductsSection from './components/ProductsSection';
 import LatestArrivalsSection from './components/LatestArrivalsSection';
@@ -8,8 +9,9 @@ import HolidaySaleBanner from './components/HolidaySaleBanner';
 
 export default function Home() {
   return (
-    <div className="min-h-screen  bg-[rgb(240,230,210)]">
+    <div className="min-h-screen bg-[rgb(240,230,210)]">
       <Navbar />
+      {/* <TopDiscountBanner /> */}
       <HeroSection />
       {/* <GallerySection/> */}
       <ProductsSection/>

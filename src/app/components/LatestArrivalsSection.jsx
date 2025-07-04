@@ -2,26 +2,21 @@
 import { useState } from 'react';
 
 export default function LatestArrivalsSection() {
-  // Set initial state to null so no button is active by default
   const [activeCategory, setActiveCategory] = useState(null);
 
   const categories = ['Shirts', 'Shorts', 'Jackets', 'Hoodies', 'Trousers'];
   
-  // Mid-range devices show 4 categories
   const midRangeCategories = ['Shirts', 'Shorts', 'Jackets', 'Hoodies'];
   
-  // Small devices show 3 categories
   const smallCategories = ['Shirts', 'Jackets', 'Trousers'];
 
   return (
-    <section className="relative w-full bg-[rgb(240,230,210)] md:w-[98%] overflow-hidden rounded-l-none sm:rounded-l-3xl ml-0 sm:ml-auto">
-      {/* Background Image */}
+    <section className="relative w-full bg-[rgb(240,230,210)] md:w-[95%] overflow-hidden rounded-l-none sm:rounded-3xl ml-0 sm:m-auto">
       <div 
         className="absolute inset-0 bg-cover bg-top z-0 rounded-l-none sm:rounded-l-3xl"
         style={{ backgroundImage: "url('/latest-arrival-image.jpg')" }}
       ></div>
 
-      {/* Enhanced Grain Effect */}
       <div className="absolute inset-0 z-0 opacity-60 mix-blend-overlay rounded-l-none sm:rounded-l-3xl">
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/30 mix-blend-multiply"></div>
         <div 
