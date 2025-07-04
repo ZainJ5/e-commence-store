@@ -631,8 +631,8 @@ export default function AdminPortal() {
                         <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-10 w-10 relative">
-                              <Image
-                                src={product.image || "/placeholder-product.jpg"}
+                              <img
+                                src={product.image}
                                 alt={product.name}
                                 layout="fill"
                                 objectFit="cover"
