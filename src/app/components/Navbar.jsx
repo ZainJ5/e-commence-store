@@ -2,12 +2,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
-import { useBannerVisibility } from './DiscountSection';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { showBanner } = useBannerVisibility();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,18 +19,10 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [scrolled]);
 
-  // Calculate top position - always 0 when scrolled (since banner disappears)
-  const getNavbarTop = () => {
-    if (scrolled) {
-      return '0px'; // Always top when scrolled (banner is hidden)
-    }
-    return showBanner ? '48px' : '0px'; // Below banner when not scrolled and banner visible
-  };
-
   return (
     <>
       <nav
-        className={`fixed left-0 right-0 transition-all duration-700 ${
+        className={`fixed top-0 left-0 right-0 transition-all duration-700 ${
           isMenuOpen ? 'z-30 lg:z-50' : 'z-50'
         } ${
           isMenuOpen ? 'lg:block hidden' : 'block'
@@ -41,7 +31,6 @@ export default function Navbar() {
             ? 'bg-gradient-to-r from-black/20 via-slate-900/15 to-black/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] py-3'
             : 'bg-transparent py-6'
         }`}
-        style={{ top: getNavbarTop() }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -100,7 +89,7 @@ export default function Navbar() {
               </div>
               <div className="relative group">
                 <ShoppingBag className="w-5 h-5 cursor-pointer" style={{ color: 'rgb(240, 230, 210)' }} />
-                <span className="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg">
+                <span className="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse">
                   3
                 </span>
               </div>
@@ -121,10 +110,9 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       <div 
-        className={`lg:hidden fixed left-0 right-0 z-50 transition-all duration-500 transform ${
+        className={`lg:hidden fixed top-0 left-0 right-0 z-50 transition-all duration-500 transform ${
           isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
-        style={{ top: scrolled ? '80px' : (showBanner ? '128px' : '80px') }}
       >
         <div className="bg-emerald-900 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md">
           {/* Mobile Header */}
@@ -133,6 +121,7 @@ export default function Navbar() {
               href="/" 
               onClick={() => setIsMenuOpen(false)}
             >
+              {/* Enhanced Mobile Logo with Premium Font */}
               <span 
                 style={{ 
                   fontFamily: "Garamond, 'Times New Roman', serif", 
@@ -215,7 +204,6 @@ export default function Navbar() {
         <div 
           className="lg:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-30 transition-opacity duration-300"
           onClick={() => setIsMenuOpen(false)}
-          style={{ top: scrolled ? '80px' : (showBanner ? '128px' : '80px') }}
         />
       )}
     </>

@@ -46,7 +46,7 @@ const TopDiscountBanner = () => {
 
   const headings = [
     "🔥 50% OFF Summer Collection - Limited Time Only!",
-    "✨ Free Shipping on Orders Over $75 - Shop Now!",
+    "✨ Free Shipping on Orders Over 500 - Shop Now!",
     "🎉 New Arrivals: Trendy Styles Just Dropped!"
   ];
 

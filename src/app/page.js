@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <BannerProvider>
       <div className="min-h-screen bg-[rgb(240,230,210)]">
-        <TopDiscountBanner />
+        {/* <TopDiscountBanner /> */}
         <HeroSection />
         <ProductsSection/>
         <LatestArrivalsSection/>
