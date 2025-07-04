@@ -115,61 +115,66 @@ export default function ProductsSection() {
       
       <div className="container mx-auto max-w-7xl">
         {/* Header Section */}
-        <div className="text-center mb-12 md:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 tracking-tight" 
-              style={{ fontFamily: "'Montserrat', sans-serif" }}>
-            LATEST COLLECTION
-          </h2>
-          <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto mb-8">
-            Discover our carefully curated selection of premium fashion pieces
-          </p>
-          
-          {/* Category Tabs */}
-          <div className="flex items-center justify-center mb-8">
-            <div className="flex flex-wrap gap-2 sm:gap-4 bg-white p-2 rounded-full shadow-lg border border-gray-100">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setActiveCategory(category)}
-                  className={`px-6 py-3 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 ${
-                    activeCategory === category
-                      ? 'bg-gray-900 text-white shadow-md'
-                      : 'bg-transparent text-gray-700 hover:bg-gray-100'
-                  }`}
-                  style={{ fontFamily: "'Montserrat', sans-serif" }}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
+        <div className="mb-8 md:mb-10">
+          <div className="text-center mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 text-gray-900 tracking-tight" 
+                style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              LATEST COLLECTION
+            </h2>
+            <p className="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">
+              Discover our carefully curated selection of premium fashion pieces
+            </p>
           </div>
           
-          {/* Navigation Arrows */}
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <button 
-              onClick={() => {
-                const container = document.getElementById('products-container');
-                container.scrollLeft -= 300;
-              }}
-              className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all duration-300 shadow-md"
-              aria-label="Scroll left"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button 
-              onClick={() => {
-                const container = document.getElementById('products-container');
-                container.scrollLeft += 300;
-              }}
-              className="w-12 h-12 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all duration-300 shadow-md"
-              aria-label="Scroll right"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+          {/* Category Tabs and Navigation - Side by Side */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+            {/* Category Tabs */}
+            <div className="flex items-center">
+              <div className="flex flex-wrap gap-2 bg-white p-2 rounded-full shadow-lg border border-gray-100">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setActiveCategory(category)}
+                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                      activeCategory === category
+                        ? 'bg-gray-900 text-white shadow-md'
+                        : 'bg-transparent text-gray-700 hover:bg-gray-100'
+                    }`}
+                    style={{ fontFamily: "'Montserrat', sans-serif" }}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Navigation Arrows */}
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  const container = document.getElementById('products-container');
+                  container.scrollLeft -= 300;
+                }}
+                className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all duration-300 shadow-md"
+                aria-label="Scroll left"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button 
+                onClick={() => {
+                  const container = document.getElementById('products-container');
+                  container.scrollLeft += 300;
+                }}
+                className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-900 hover:text-white hover:border-gray-900 transition-all duration-300 shadow-md"
+                aria-label="Scroll right"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
