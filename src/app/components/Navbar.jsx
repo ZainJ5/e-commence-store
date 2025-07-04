@@ -22,7 +22,11 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-700 ${
+        className={`fixed top-0 left-0 right-0 transition-all duration-700 ${
+          isMenuOpen ? 'z-30 lg:z-50' : 'z-50'
+        } ${
+          isMenuOpen ? 'lg:block hidden' : 'block'
+        } ${
           scrolled
             ? 'bg-gradient-to-r from-black/20 via-slate-900/15 to-black/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] py-3'
             : 'bg-transparent py-6'
@@ -106,7 +110,7 @@ export default function Navbar() {
 
       {/* Mobile Dropdown Menu */}
       <div 
-        className={`lg:hidden fixed top-0 left-0 right-0 z-40 transition-all duration-500 transform ${
+        className={`lg:hidden fixed top-0 left-0 right-0 z-50 transition-all duration-500 transform ${
           isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
       >

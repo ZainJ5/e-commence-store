@@ -235,7 +235,7 @@ export default function PremiumCarousel() {
                     maxWidth: isMobile ? "260px" : isTablet ? "300px" : "384px", // Prevent cards from being too wide on mobile
                   }}
                   onClick={() => goToSlide(index)}
-                  whileHover={isActive ? { scale: 1.02 } : {}}
+                  // Removed the hover effect that was causing blur/scale issues
                   transition={{
                     duration: 0.7,
                     ease: [0.23, 1, 0.32, 1], // Custom cubic bezier for premium feel
