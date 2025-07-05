@@ -104,7 +104,7 @@ export default function Navbar() {
             {/* Desktop Navigation */}
             <div className="flex space-x-16">
               {[
-                { href: '/new', label: 'New & Featured' },
+                { href: '/customized', label: 'Customize' },
                 { href: '/men', label: 'Men' },
                 { href: '/women', label: 'Women' },
                 { href: '/kids', label: 'Kids' },
