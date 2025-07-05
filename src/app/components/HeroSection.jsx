@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import GallerySection from './GallerySection';
-import TopDiscountBanner from './DiscountSection';
-
 
 
 export default function HeroSection() {
@@ -46,7 +44,7 @@ export default function HeroSection() {
       </div>
 
       {/* Wave SVG mask at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-[120px] -mb-px">
+      {/* <div className="absolute bottom-0 left-0 right-0 h-[120px] -mb-px">
         <svg 
           viewBox="0 0 1360 120" 
           xmlns="http://www.w3.org/2000/svg"
@@ -61,14 +59,14 @@ export default function HeroSection() {
           </defs>
           <rect width="1360" height="120" fill="rgb(240,230,210)" mask="url(#waveMask)"/>
         </svg>
-      </div>
+      </div> */}
     </div>
 
-    <GallerySection/>
+    {/* <GallerySection/> */}
 
-    <svg viewBox="0 0 1360 120" xmlns="http://www.w3.org/2000/svg">
+    {/* <svg viewBox="0 0 1360 120" xmlns="http://www.w3.org/2000/svg">
       <path d="M0,70 C85,70 170,50 340,40 C680,20 1020,40 1360,80 L1360,120 L0,120 Z" fill="rgb(16, 81, 64)"/>
-    </svg>
+    </svg> */}
     </>
   );
 }
