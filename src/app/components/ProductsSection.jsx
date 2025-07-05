@@ -210,23 +210,27 @@ export default function ProductsSection() {
                     
                     {/* New Badge */}
                     {product.isNew && (
-                      <div className="absolute top-3 left-3 bg-green-600 text-white text-xs font-medium px-2 py-1 rounded">
+                      <div className="absolute top-3 left-3 bg-green-600 text-white text-xs font-medium px-2 py-1 rounded z-10">
                         NEW
                       </div>
                     )}
                     
                     {/* Discount Badge */}
                     {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                      <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded">
+                      <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded z-10">
                         {calculateDiscount(product.originalPrice, product.discountedPrice)}
                       </div>
                     )}
                     
                     {/* Hover Actions */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex items-center justify-center z-10">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-3">
                         <button 
-                          onClick={() => toggleWishlist(product._id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleWishlist(product._id);
+                          }}
                           className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
                         >
                           <svg 
@@ -240,7 +244,11 @@ export default function ProductsSection() {
                         </button>
                         
                         <button 
-                          onClick={() => addToCart(product)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            addToCart(product);
+                          }}
                           aria-label="Add to cart"
                           className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
                         >
@@ -251,10 +259,10 @@ export default function ProductsSection() {
                       </div>
                     </div>
                     
-                    {/* Quick View Link */}
+                    {/* Quick View Link - Now only covers the image background */}
                     <Link 
                       href={`/products/${product._id}`}
-                      className="absolute inset-0"
+                      className="absolute inset-0 z-0"
                     >
                       <span className="sr-only">View product details</span>
                     </Link>
