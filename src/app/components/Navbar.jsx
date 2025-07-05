@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, User, Heart, ShoppingBag, Menu, X } from 'lucide-react';
+import { Search, User, Heart, ShoppingBag, Menu, X, Facebook, Instagram } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -28,26 +28,29 @@ export default function Navbar() {
           isMenuOpen ? 'lg:block hidden' : 'block'
         } ${
           scrolled
-            ? 'bg-gradient-to-r from-black/20 via-slate-900/15 to-black/20 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.15)] py-3'
+            ? 'bg-gradient-to-r from-black/40 via-slate-900/35 to-black/40 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.25)] py-3 border-b border-white/10'
             : 'bg-transparent py-6'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Logo */}
             <Link 
               href="/" 
-              className={`text-2xl font-bold tracking-wide  ${
-                scrolled ? 'scale-95' : ''
-              }`}
+              className="text-2xl font-bold tracking-wide transition-all duration-500"
             >
               <span 
                 style={{ 
-                  fontFamily: "Garamond, 'Times New Roman', serif", 
-                  color: 'rgb(240, 230, 210)',
-                  letterSpacing: '0.08em',
-                  fontSize: '28px',
+                  fontFamily: "Playfair Display, Garamond, 'Times New Roman', serif", 
+                  color: 'rgb(250, 245, 235)',
+                  letterSpacing: '0.12em',
+                  fontSize: '36px',
                   fontWeight: '700',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                  textShadow: '0 3px 8px rgba(0,0,0,0.4)',
+                  background: 'linear-gradient(135deg, #f0e6d2 0%, #e8dcc0 50%, #d4c5a0 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
                 }}
               >
                 ShahBazar
@@ -55,41 +58,76 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex space-x-12">
+            <div className="hidden lg:flex space-x-16">
               {[
                 { href: '/new', label: 'New & Featured' },
                 { href: '/men', label: 'Men' },
                 { href: '/women', label: 'Women' },
                 { href: '/kids', label: 'Kids' },
-                { href: '/accessories', label: 'Accessories' },
-                { href: '/sales', label: 'Sales' },
               ].map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm tracking-widest uppercase font-bold relative group transition-all duration-500"
-                  style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(240, 230, 210)' }}
+                  className="text-sm tracking-[0.15em] uppercase font-semibold relative group transition-all duration-500"
+                  style={{ 
+                    fontFamily: "'Montserrat', sans-serif", 
+                    color: 'rgb(250, 245, 235)',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                  }}
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-emerald-500 transition-all duration-500 group-hover:w-full"></span>
+                  <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-500 group-hover:w-full shadow-sm"></span>
                 </Link>
               ))}
             </div>
 
             {/* Right Side Icons */}
-            <div className="flex items-center space-x-6">
-              <div className="hidden sm:block group">
-                <Search className="w-5 h-5 cursor-pointer" style={{ color: 'rgb(240, 230, 210)' }} />
+            <div className="flex items-center space-x-8">
+              {/* Social Media Icons */}
+              <div className="hidden lg:flex items-center space-x-5">
+                <a 
+                  href="https://facebook.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group transition-all duration-300 p-2 rounded-full hover:bg-white/10"
+                >
+                  <svg className="w-5 h-5 cursor-pointer transition-all duration-300" 
+                    style={{ color: 'rgb(250, 245, 235)' }} 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </a>
+                <a 
+                  href="https://instagram.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="group transition-all duration-300 p-2 rounded-full hover:bg-white/10"
+                >
+                  <svg className="w-5 h-5 cursor-pointer transition-all duration-300" 
+                    style={{ color: 'rgb(250, 245, 235)' }} 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </a>
               </div>
-              <div className="hidden sm:block group">
-                <User className="w-5 h-5 cursor-pointer" style={{ color: 'rgb(240, 230, 210)' }} />
+
+              {/* Divider */}
+              <div className="hidden lg:block w-px h-6 bg-white/20"></div>
+
+              {/* Action Icons */}
+              <div className="hidden sm:flex items-center space-x-6">
+                <div className="group cursor-pointer transition-all duration-300 p-2 rounded-full hover:bg-white/10">
+                  <Search className="w-5 h-5" style={{ color: 'rgb(250, 245, 235)' }} />
+                </div>
               </div>
-              <div className="hidden sm:block group">
-                <Heart className="w-5 h-5 cursor-pointer" style={{ color: 'rgb(240, 230, 210)' }} />
-              </div>
-              <div className="relative group">
-                <ShoppingBag className="w-5 h-5 cursor-pointer" style={{ color: 'rgb(240, 230, 210)' }} />
-                <span className="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse">
+
+              <div className="relative group cursor-pointer transition-all duration-300 p-2 rounded-full hover:bg-white/10">
+                <ShoppingBag className="w-5 h-5" style={{ color: 'rgb(250, 245, 235)' }} />
+                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse font-semibold">
                   3
                 </span>
               </div>
@@ -97,8 +135,8 @@ export default function Navbar() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-2 transition-all duration-300"
-                style={{ color: 'rgb(240, 230, 210)' }}
+                className="lg:hidden p-2 transition-all duration-300 rounded-full hover:bg-white/10"
+                style={{ color: 'rgb(250, 245, 235)' }}
                 aria-label="Toggle menu"
               >
                 <Menu className="w-6 h-6" />
@@ -114,22 +152,24 @@ export default function Navbar() {
           isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
       >
-        <div className="bg-emerald-900 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md">
+        <div className="bg-gradient-to-b from-emerald-900 via-emerald-800 to-emerald-900 shadow-[0_8px_30px_rgb(0,0,0,0.15)] backdrop-blur-md border-b border-emerald-700/30">
           {/* Mobile Header */}
-          <div className="flex items-center justify-between px-6 py-5">
+          <div className="flex items-center justify-between px-6 py-6">
             <Link 
               href="/" 
               onClick={() => setIsMenuOpen(false)}
             >
-              {/* Enhanced Mobile Logo with Premium Font */}
               <span 
                 style={{ 
-                  fontFamily: "Garamond, 'Times New Roman', serif", 
-                  color: 'rgb(240, 230, 210)',
-                  letterSpacing: '0.08em',
-                  fontSize: '22px',
+                  fontFamily: "Playfair Display, Garamond, 'Times New Roman', serif", 
+                  color: 'rgb(250, 245, 235)',
+                  letterSpacing: '0.12em',
+                  fontSize: '28px',
                   fontWeight: '700',
-                  textShadow: '0 2px 4px rgba(0,0,0,0.15)'
+                  textShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                  // WebkitBackgroundClip: 'text',
+                  // WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text'
                 }}
               >
                 ShahBazar
@@ -137,63 +177,114 @@ export default function Navbar() {
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 transition-all duration-300"
-              style={{ color: 'rgb(240, 230, 210)' }}
+              className="p-2 transition-all duration-300 rounded-full hover:bg-white/10"
+              style={{ color: 'rgb(250, 245, 235)' }}
               aria-label="Close menu"
             >
-              <X className="w-5 h-5" />
+              <X className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Subtle Divider */}
-          <div className="h-[1px] bg-emerald-700"></div>
+          {/* Elegant Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent mx-6"></div>
 
           {/* Mobile Navigation Links */}
-          <div className="px-6 py-3 space-y-1">
+          <div className="px-6 py-6 space-y-2">
             {[
               { href: '/new', label: 'New & Featured' },
               { href: '/men', label: 'Men' },
               { href: '/women', label: 'Women' },
               { href: '/kids', label: 'Kids' },
-              { href: '/accessories', label: 'Accessories' },
-              { href: '/sales', label: 'Sales' },
             ].map((link) => (
               <Link 
                 key={link.href}
                 href={link.href} 
-                className="block transition-all duration-300 font-bold uppercase tracking-wider px-3 py-3 text-sm relative group"
+                className="block transition-all duration-300 font-semibold uppercase tracking-wider px-4 py-4 text-sm relative group hover:bg-white/5 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
-                style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(240, 230, 210)' }}
+                style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgb(250, 245, 235)' }}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-emerald-400 transition-all duration-300 group-hover:w-[calc(100%-24px)]"></span>
+                <span className="absolute bottom-2 left-4 w-0 h-0.5 bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all duration-300 group-hover:w-[calc(100%-32px)]"></span>
               </Link>
             ))}
           </div>
           
-          {/* Subtle Divider */}
-          <div className="h-[1px] bg-emerald-700"></div>
+          {/* Elegant Divider */}
+          <div className="h-px bg-gradient-to-r from-transparent via-emerald-400/50 to-transparent mx-6"></div>
           
-          {/* Mobile Icons */}
-          <div className="flex items-center justify-between px-8 py-5">
-            <div className="flex flex-col items-center">
-              <Search className="w-5 h-5 cursor-pointer transition-all duration-300" style={{ color: 'rgb(240, 230, 210)' }} />
-              <span className="text-xs mt-1" style={{ color: 'rgb(240, 230, 210, 0.8)' }}>Search</span>
+          {/* Mobile Icons & Social Media */}
+          <div className="px-8 py-6">
+            {/* Action Icons */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex flex-col items-center group">
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <Search className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} />
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Search</span>
+              </div>
+              <div className="flex flex-col items-center group">
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <User className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} />
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Account</span>
+              </div>
+              {/* <div className="flex flex-col items-center group">
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <Heart className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} />
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Wishlist</span>
+              </div> */}
+              <div className="flex flex-col items-center relative group">
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <ShoppingBag className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} />
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-semibold">
+                    3
+                  </span>
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Bag</span>
+              </div>
             </div>
-            <div className="flex flex-col items-center">
-              <User className="w-5 h-5 cursor-pointer transition-all duration-300" style={{ color: 'rgb(240, 230, 210)' }} />
-              <span className="text-xs mt-1" style={{ color: 'rgb(240, 230, 210, 0.8)' }}>Account</span>
-            </div>
-            <div className="flex flex-col items-center">
-              <Heart className="w-5 h-5 cursor-pointer transition-all duration-300" style={{ color: 'rgb(240, 230, 210)' }} />
-              <span className="text-xs mt-1" style={{ color: 'rgb(240, 230, 210, 0.8)' }}>Wishlist</span>
-            </div>
-            <div className="flex flex-col items-center relative">
-              <ShoppingBag className="w-5 h-5 cursor-pointer transition-all duration-300" style={{ color: 'rgb(240, 230, 210)' }} />
-              <span className="absolute -top-2 -right-1 bg-emerald-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                3
-              </span>
-              <span className="text-xs mt-1" style={{ color: 'rgb(240, 230, 210, 0.8)' }}>Bag</span>
+
+            {/* Social Media Icons */}
+            <div className="flex justify-center space-x-8">
+              <a 
+                href="https://facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex flex-col items-center group transition-all duration-300"
+              >
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <svg className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Facebook</span>
+              </a>
+              <a 
+                href="https://instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex flex-col items-center group transition-all duration-300"
+              >
+                <div className="p-2 rounded-full hover:bg-white/10 transition-all duration-300">
+                  <svg className="w-6 h-6 cursor-pointer" 
+                    style={{ color: 'rgb(250, 245, 235)' }} 
+                    fill="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  </svg>
+                </div>
+                <span className="text-xs mt-2 font-medium" style={{ color: 'rgb(250, 245, 235, 0.8)' }}>Instagram</span>
+              </a>
             </div>
           </div>
         </div>
@@ -202,7 +293,7 @@ export default function Navbar() {
       {/* Mobile Overlay */}
       {isMenuOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-30 transition-opacity duration-300"
+          className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-30 transition-opacity duration-300"
           onClick={() => setIsMenuOpen(false)}
         />
       )}
