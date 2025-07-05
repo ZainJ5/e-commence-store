@@ -284,7 +284,7 @@ export default function ProductsSection() {
         
         {/* View All Link */}
         {filteredProducts.length > 0 && (
-          <div className="text-center mt-12">
+          <div className="text-center mt-6 lg:mt-8">
             <Link 
               href="/collections" 
               className="inline-flex items-center text-black border-b border-black pb-1 hover:border-gray-400 transition-colors duration-200 text-sm font-medium"

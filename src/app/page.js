@@ -17,7 +17,7 @@ export default function Home() {
       <ProductsSection/>
       <LatestArrivalsSection/>
       <FeaturedProducts />
-      <div className='pb-10 pt-6 md:p-6'>
+      <div className='pb-4 md:p-6'>
       <HolidaySaleBanner />
       </div>
       
