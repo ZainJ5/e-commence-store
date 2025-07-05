@@ -97,7 +97,7 @@ export default function ProductsSection() {
     setCart(newCart);
     localStorage.setItem('cart', JSON.stringify(newCart));
     
-    // Show success notification (you can implement this)
+    // Show success notification
     alert(`Added ${product.name} to cart!`);
   };
   
@@ -177,7 +177,7 @@ export default function ProductsSection() {
           <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg text-center" role="alert">
             <span className="font-medium">{error}</span>
           </div>
-        ) : filteredProducts.length === 0 ? (
+        ) : filteredFilteredProducts.length === 0 ? (
           <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-6 py-4 rounded-lg text-center" role="alert">
             <span className="font-medium">No products available in this category.</span>
           </div>
@@ -192,24 +192,28 @@ export default function ProductsSection() {
             <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
                 <div key={product._id} className="group bg-white/90 backdrop-blur-sm rounded-2xl p-5 flex-shrink-0 w-72 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20">
-                  {/* Image Container - Fixed height with proper aspect ratio */}
+                  {/* Image Container - Full width with enhanced UI */}
                   <div className="relative mb-5 cursor-pointer" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
-                    <div className="aspect-[4/5] w-full overflow-hidden bg-gray-50 rounded-xl">
+                    <div className="w-full aspect-[4/5] overflow-hidden bg-gray-100 rounded-xl relative">
                       {product.image ? (
                         <img 
                           src={product.image} 
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          style={{ objectFit: 'cover', objectPosition: 'center' }}
+                          loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center">
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100">
                           <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
                       )}
+                      {/* Image Overlay for Hover Effect */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-300 rounded-xl"></div>
                     </div>
                     
                     {/* Badges Container */}
@@ -235,7 +239,7 @@ export default function ProductsSection() {
                         e.stopPropagation();
                         toggleWishlist(product._id);
                       }}
-                      className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full transition-all duration-200 shadow-sm"
+                      className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full transition-all duration-200 shadow-sm hover:shadow-md"
                     >
                       <svg 
                         className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} 
