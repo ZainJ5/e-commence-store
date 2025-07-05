@@ -192,11 +192,9 @@ export default function ProductsSection() {
             <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
                 <div key={product._id} className="group bg-white/80 backdrop-blur-sm rounded-lg p-4 flex-shrink-0 w-64 sm:w-72 lg:w-80 shadow-sm">
-                  {/* Product Image Container - SIMPLIFIED */}
                   <div className="relative overflow-hidden bg-gray-50 mb-4 cursor-pointer rounded-lg" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
-                    {/* Just the image - NO overlays */}
                     {product.image ? (
                       <img 
                         src={product.image} 
