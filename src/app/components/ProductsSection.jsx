@@ -191,47 +191,54 @@ export default function ProductsSection() {
             `}</style>
             <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
-                <div key={product._id} className="group bg-white/80 backdrop-blur-sm rounded-lg p-4 flex-shrink-0 w-64 sm:w-72 lg:w-80 shadow-sm">
-                  <div className="relative overflow-hidden bg-gray-50 mb-4 cursor-pointer rounded-lg" 
+                <div key={product._id} className="group bg-white/90 backdrop-blur-sm rounded-2xl p-5 flex-shrink-0 w-72 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20">
+                  {/* Image Container - Fixed height with proper aspect ratio */}
+                  <div className="relative mb-5 cursor-pointer" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
-                    {product.image ? (
-                      <img 
-                        src={product.image} 
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 rounded-lg"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center rounded-lg">
-                        <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                      </div>
-                    )}
+                    <div className="aspect-[4/5] w-full overflow-hidden bg-gray-50 rounded-xl">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
                     
-                    {/* New Badge */}
-                    {product.isNew && (
-                      <div className="absolute top-3 left-3 bg-green-600 text-white text-xs font-medium px-2 py-1 rounded pointer-events-none">
-                        NEW
-                      </div>
-                    )}
-                    
-                    {/* Discount Badge */}
-                    {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                      <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-medium px-2 py-1 rounded pointer-events-none">
-                        {calculateDiscount(product.originalPrice, product.discountedPrice)}
-                      </div>
-                    )}
-                  </div>
+                    {/* Badges Container */}
+                    <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
+                      {/* New Badge */}
+                      {product.isNew && (
+                        <div className="bg-emerald-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                          NEW
+                        </div>
+                      )}
+                      
+                      {/* Discount Badge */}
+                      {product.discountedPrice && product.discountedPrice < product.originalPrice && (
+                        <div className="bg-red-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ml-auto">
+                          {calculateDiscount(product.originalPrice, product.discountedPrice)}
+                        </div>
+                      )}
+                    </div>
 
-                  {/* Action buttons below image */}
-                  <div className="flex justify-between items-center mb-2">
+                    {/* Wishlist Button - Positioned over image */}
                     <button 
-                      onClick={() => toggleWishlist(product._id)}
-                      className="p-2 hover:bg-gray-100 rounded-full transition-colors duration-200"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product._id);
+                      }}
+                      className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full transition-all duration-200 shadow-sm"
                     >
                       <svg 
-                        className={`w-5 h-5 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-400'}`} 
+                        className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} 
                         fill={wishlist.includes(product._id) ? 'currentColor' : 'none'} 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -239,36 +246,31 @@ export default function ProductsSection() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                     </button>
-                    
-                    <button 
-                      onClick={() => addToCart(product)}
-                      className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors duration-200 rounded"
-                      style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
-                    >
-                      Add to Cart
-                    </button>
                   </div>
 
-                  {/* Product Info */}
-                  <div className="space-y-2">
+                  {/* Product Info Container - Fixed height for consistency */}
+                  <div className="space-y-3 h-32 flex flex-col justify-between">
+                    {/* Product Name */}
                     <Link href={`/products/${product._id}`}>
-                      <h3 className="text-sm font-medium text-black hover:text-gray-600 transition-colors duration-200 line-clamp-2" 
+                      <h3 className="text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors duration-200 line-clamp-2 leading-5" 
                           style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
                     </Link>
                     
+                    {/* Price Section */}
                     <div className="flex items-center space-x-2">
                       {product.discountedPrice ? (
                         <>
-                          <span className="text-black font-medium text-sm">{formatPrice(product.discountedPrice)}</span>
+                          <span className="text-gray-900 font-bold text-base">{formatPrice(product.discountedPrice)}</span>
                           <span className="text-gray-400 line-through text-sm">{formatPrice(product.originalPrice)}</span>
                         </>
                       ) : (
-                        <span className="text-black font-medium text-sm">{formatPrice(product.originalPrice)}</span>
+                        <span className="text-gray-900 font-bold text-base">{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     
+                    {/* Stock Status */}
                     {(product.stock === 0 || product.stock < 5) && (
                       <div className="text-xs">
                         <span className={`${product.stock === 0 ? 'text-red-600' : 'text-amber-600'} font-medium`}>
@@ -276,6 +278,20 @@ export default function ProductsSection() {
                         </span>
                       </div>
                     )}
+                    
+                    {/* Add to Cart Button */}
+                    <button 
+                      onClick={() => addToCart(product)}
+                      disabled={product.stock === 0}
+                      className={`w-full py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
+                        product.stock === 0 
+                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                          : 'bg-black text-white hover:bg-gray-800 active:scale-95'
+                      }`}
+                      style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
+                    >
+                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                    </button>
                   </div>
                 </div>
               ))}

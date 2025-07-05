@@ -127,7 +127,7 @@ export default function Navbar() {
 
               <div className="relative group cursor-pointer transition-all duration-300 p-2 rounded-full hover:bg-white/10">
                 <ShoppingBag className="w-5 h-5" style={{ color: 'rgb(250, 245, 235)' }} />
-                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg animate-pulse font-semibold">
+                <span className="absolute -top-2 -right-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center shadow-lg font-semibold">
                   3
                 </span>
               </div>
