@@ -53,7 +53,7 @@ export default function ProductsSection() {
 
   const filteredProducts = selectedCategory === 'all' 
     ? products.filter(product => product.isActive !== false)
-    : products.filter(product => product.isActive !== false && product.category === selectedCategory);
+    : products.filter(product => product.isActive !== false && product.gender === selectedCategory);
 
   const formatPrice = (price) => {
     return `Rs.${Number(price).toLocaleString()}.00`;
