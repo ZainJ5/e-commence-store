@@ -172,20 +172,20 @@ export default function ProductsSection() {
                 display: none;
               }
             `}</style>
-            <div className="flex gap-4 pb-4" style={{ width: `${filteredProducts.length * 280}px` }}>
+            <div className="flex gap-3 pb-4" style={{ width: `${filteredProducts.length * 200}px` }}>
               {filteredProducts.map((product) => (
-                <div key={product._id} className="group relative bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 flex-shrink-0" style={{ width: '260px' }}>
+                <div key={product._id} className="group relative bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 flex-shrink-0 border border-white/20" style={{ width: '180px' }}>
                   {/* Product Image */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-gray-200">
+                  <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
                     {product.image ? (
                       <img 
                         src={product.image} 
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="w-12 h-12 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                       </div>
@@ -193,62 +193,32 @@ export default function ProductsSection() {
                     
                     {/* Discount Badge */}
                     {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                      <div className="absolute top-3 left-3 bg-emerald-700 text-white text-xs font-bold px-2 py-1 rounded-md">
+                      <div className="absolute top-2 left-2 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">
                         {calculateDiscount(product.originalPrice, product.discountedPrice)}
                       </div>
                     )}
                     
-                    {/* Wishlist Button */}
-                    <button 
-                      onClick={() => toggleWishlist(product._id)}
-                      className="absolute top-3 right-3 w-10 h-10 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all"
-                    >
-                      <svg 
-                        className={`w-5 h-5 ${wishlist.includes(product._id) ? 'text-emerald-700 fill-current' : 'text-gray-800'}`} 
-                        fill={wishlist.includes(product._id) ? 'currentColor' : 'none'} 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24" 
-                        xmlns="http://www.w3.org/2000/svg"
+                    {/* Action Buttons */}
+                    <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                      <button 
+                        onClick={() => toggleWishlist(product._id)}
+                        className="w-8 h-8 bg-white/95 backdrop-blur-sm hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={wishlist.includes(product._id) ? 1 : 2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
-                    
-                    {/* Quick View */}
-                    <Link 
-                      href={`/products/${product._id}`}
-                      className="absolute bottom-3 left-3 right-3 bg-emerald-700/85 text-white text-center py-2 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ fontFamily: "'Montserrat', sans-serif" }}
-                    >
-                      Quick View
-                    </Link>
-                  </div>
-
-                  {/* Product Info */}
-                  <div className="p-3">
-                    <div className="mb-2">
-                      <h3 className="text-base font-bold text-emerald-900 truncate" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-emerald-800/70">{product.category || 'Fashion'} • {getAvailableSizes(product)}</p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex flex-wrap items-center gap-2">
-                        {product.discountedPrice ? (
-                          <>
-                            <span className="text-gray-500 line-through text-sm">{formatPrice(product.originalPrice)}</span>
-                            <span className="text-emerald-700 font-bold text-sm">{formatPrice(product.discountedPrice)}</span>
-                          </>
-                        ) : (
-                          <span className="text-emerald-800 font-bold text-sm">{formatPrice(product.originalPrice)}</span>
-                        )}
-                      </div>
+                        <svg 
+                          className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-emerald-700 fill-current' : 'text-gray-700'}`} 
+                          fill={wishlist.includes(product._id) ? 'currentColor' : 'none'} 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24" 
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </button>
                       
                       <button 
                         onClick={() => addToCart(product)}
                         aria-label="Add to cart"
-                        className="w-8 h-8 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white flex items-center justify-center transition-all"
+                        className="w-8 h-8 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -256,12 +226,44 @@ export default function ProductsSection() {
                       </button>
                     </div>
                     
-                    {/* Stock indicator */}
-                    {(product.stock === 0 || product.stock < 5) && (
-                      <div className={`text-xs mt-2 ${product.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
-                        {product.stock === 0 ? 'Out of stock' : `Only ${product.stock} left`}
+                    {/* Quick View Overlay */}
+                    <Link 
+                      href={`/products/${product._id}`}
+                      className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300"
+                    >
+                      <div className="bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full text-emerald-800 text-sm font-bold shadow-lg transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                        Quick View
                       </div>
-                    )}
+                    </Link>
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-3 bg-gradient-to-b from-white to-gray-50/50">
+                    <h3 className="text-sm font-bold text-emerald-900 truncate mb-1" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                      {product.name}
+                    </h3>
+                    
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col">
+                        {product.discountedPrice ? (
+                          <>
+                            <span className="text-emerald-700 font-bold text-sm">{formatPrice(product.discountedPrice)}</span>
+                            <span className="text-gray-400 line-through text-xs">{formatPrice(product.originalPrice)}</span>
+                          </>
+                        ) : (
+                          <span className="text-emerald-800 font-bold text-sm">{formatPrice(product.originalPrice)}</span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-emerald-700/70 font-medium">{product.category || 'Fashion'}</span>
+                      {(product.stock === 0 || product.stock < 5) && (
+                        <span className={`font-medium ${product.stock === 0 ? 'text-red-600' : 'text-amber-600'}`}>
+                          {product.stock === 0 ? 'Out of stock' : `${product.stock} left`}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
