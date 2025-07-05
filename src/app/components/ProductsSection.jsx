@@ -189,53 +189,51 @@ export default function ProductsSection() {
                 display: none;
               }
             `}</style>
-            <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
+            <div className="flex gap-8 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
-                <div key={product._id} className="group bg-white/90 backdrop-blur-sm rounded-2xl p-5 flex-shrink-0 w-72 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20">
-                  {/* Image Container - Fixed height with proper aspect ratio */}
-                  <div className="relative mb-5 cursor-pointer" 
+                <div key={product._id} className="group flex-shrink-0 w-80">
+                  {/* Image Container - Larger size, no rounded container */}
+                  <div className="relative mb-4 cursor-pointer bg-white" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
-                    <div className="aspect-[4/5] w-full overflow-hidden bg-gray-50 rounded-xl">
+                    <div className="aspect-square w-full overflow-hidden bg-gray-50">
                       {product.image ? (
                         <img 
                           src={product.image} 
                           alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
                       )}
                     </div>
                     
-                    {/* Badges Container */}
-                    <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
-                      {/* New Badge */}
-                      {product.isNew && (
-                        <div className="bg-emerald-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
-                          NEW
-                        </div>
-                      )}
-                      
-                      {/* Discount Badge */}
-                      {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                        <div className="bg-red-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ml-auto">
-                          {calculateDiscount(product.originalPrice, product.discountedPrice)}
-                        </div>
-                      )}
-                    </div>
+                    {/* NEW Badge - positioned like in your image */}
+                    {product.isNew && (
+                      <div className="absolute top-4 left-4 bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
+                        NEW
+                      </div>
+                    )}
+                    
+                    {/* Discount Badge */}
+                    {product.discountedPrice && product.discountedPrice < product.originalPrice && (
+                      <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
+                        {calculateDiscount(product.originalPrice, product.discountedPrice)}
+                      </div>
+                    )}
 
-                    {/* Wishlist Button - Positioned over image */}
+                    {/* Wishlist Button */}
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleWishlist(product._id);
                       }}
-                      className="absolute top-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm hover:bg-white rounded-full transition-all duration-200 shadow-sm"
+                      className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-sm"
+                      style={{ display: !(product.discountedPrice && product.discountedPrice < product.originalPrice) ? 'block' : 'none' }}
                     >
                       <svg 
                         className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} 
@@ -248,25 +246,24 @@ export default function ProductsSection() {
                     </button>
                   </div>
 
-                  {/* Product Info Container - Fixed height for consistency */}
-                  <div className="space-y-3 h-32 flex flex-col justify-between">
-                    {/* Product Name */}
+                  {/* Product Info - Clean and minimal like in your image */}
+                  <div className="text-center space-y-2">
                     <Link href={`/products/${product._id}`}>
-                      <h3 className="text-sm font-semibold text-gray-900 hover:text-gray-700 transition-colors duration-200 line-clamp-2 leading-5" 
+                      <h3 className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide" 
                           style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
                     </Link>
                     
-                    {/* Price Section */}
-                    <div className="flex items-center space-x-2">
+                    {/* Price */}
+                    <div className="flex justify-center items-center space-x-2">
                       {product.discountedPrice ? (
                         <>
-                          <span className="text-gray-900 font-bold text-base">{formatPrice(product.discountedPrice)}</span>
+                          <span className="text-gray-900 font-medium text-base">{formatPrice(product.discountedPrice)}</span>
                           <span className="text-gray-400 line-through text-sm">{formatPrice(product.originalPrice)}</span>
                         </>
                       ) : (
-                        <span className="text-gray-900 font-bold text-base">{formatPrice(product.originalPrice)}</span>
+                        <span className="text-gray-900 font-medium text-base">{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     
@@ -278,20 +275,6 @@ export default function ProductsSection() {
                         </span>
                       </div>
                     )}
-                    
-                    {/* Add to Cart Button */}
-                    <button 
-                      onClick={() => addToCart(product)}
-                      disabled={product.stock === 0}
-                      className={`w-full py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 ${
-                        product.stock === 0 
-                          ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                          : 'bg-black text-white hover:bg-gray-800 active:scale-95'
-                      }`}
-                      style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
-                    >
-                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </button>
                   </div>
                 </div>
               ))}
