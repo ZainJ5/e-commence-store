@@ -107,64 +107,64 @@ export default function ProductsSection() {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-white">      
+    <section className="py-16 lg:py-20 bg-[rgb(240,230,210)]">      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-12">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-12">
           <div className="text-center lg:text-left">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-black mb-2" 
                 style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
               NEW ARRIVALS
             </h2>
-            <p className="text-sm text-gray-600 font-light tracking-wide uppercase">
+            <p className="text-sm text-gray-600 font-light tracking-wide uppercase mb-4">
               Discover our latest collection
             </p>
+            
+            {/* Category Tabs - Moved to left side below heading */}
+            <div className="flex justify-center lg:justify-start">
+              <div className="inline-flex bg-white/50 rounded-full p-1">
+                {categories.map((category, index) => (
+                  <button
+                    key={category.id}
+                    onClick={() => setSelectedCategory(category.id)}
+                    className={`px-3 py-1 text-xs font-medium rounded-full transition-all duration-200 ${
+                      selectedCategory === category.id
+                        ? 'bg-black text-white shadow-sm'
+                        : 'text-gray-600 hover:text-black'
+                    }`}
+                    style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
+                  >
+                    {category.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
           
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows - Always black background */}
           <div className="hidden lg:flex items-center space-x-3 mt-6 lg:mt-0">
             <button 
-              className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-black transition-colors duration-200 group"
+              className="w-10 h-10 rounded-full bg-black flex items-center justify-center hover:bg-gray-800 transition-colors duration-200"
               onClick={() => {
                 const container = document.querySelector('.products-scroll');
                 container?.scrollBy({ left: -300, behavior: 'smooth' });
               }}
             >
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button 
-              className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:border-black transition-colors duration-200 group"
+              className="w-10 h-10 rounded-full bg-black flex items-center justify-center hover:bg-gray-800 transition-colors duration-200"
               onClick={() => {
                 const container = document.querySelector('.products-scroll');
                 container?.scrollBy({ left: 300, behavior: 'smooth' });
               }}
             >
-              <svg className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
               </svg>
             </button>
-          </div>
-        </div>
-
-        {/* Category Tabs */}
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-gray-50 rounded-full p-1">
-            {categories.map((category, index) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                  selectedCategory === category.id
-                    ? 'bg-black text-white shadow-sm'
-                    : 'text-gray-600 hover:text-black'
-                }`}
-                style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
-              >
-                {category.name}
-              </button>
-            ))}
           </div>
         </div>
 
@@ -191,9 +191,9 @@ export default function ProductsSection() {
             `}</style>
             <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
-                <div key={product._id} className="group bg-white flex-shrink-0 w-64 sm:w-72 lg:w-80">
+                <div key={product._id} className="group bg-white/80 backdrop-blur-sm rounded-lg p-4 flex-shrink-0 w-64 sm:w-72 lg:w-80 shadow-sm">
                   {/* Product Image Container - SIMPLIFIED */}
-                  <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 mb-4 cursor-pointer" 
+                  <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 mb-4 cursor-pointer rounded-lg" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
                     {/* Just the image - NO overlays */}
@@ -201,10 +201,10 @@ export default function ProductsSection() {
                       <img 
                         src={product.image} 
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-lg"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center rounded-lg">
                         <svg className="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -244,7 +244,7 @@ export default function ProductsSection() {
                     
                     <button 
                       onClick={() => addToCart(product)}
-                      className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors duration-200"
+                      className="bg-black text-white px-4 py-2 text-sm font-medium hover:bg-gray-800 transition-colors duration-200 rounded"
                       style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
                     >
                       Add to Cart
