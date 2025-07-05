@@ -5,22 +5,23 @@ import LatestArrivalsSection from './components/LatestArrivalsSection';
 import FeaturedProducts from './components/FeaturedProducts';
 import Footer from './components/Footer';
 import HolidaySaleBanner from './components/HolidaySaleBanner';
-import TopDiscountBanner, { BannerProvider } from './components/DiscountSection';
+import TopDiscountBanner from './components/DiscountSection';
+
 
 export default function Home() {
   return (
-    <BannerProvider>
-      <div className="min-h-screen bg-[rgb(240,230,210)]">
-        {/* <TopDiscountBanner /> */}
-        <HeroSection />
-        <ProductsSection/>
-        <LatestArrivalsSection/>
-        <FeaturedProducts />
-        <div className='pb-10 pt-6 md:p-6'>
-          <HolidaySaleBanner />
-        </div>
-        <Footer />
+    <div className="min-h-screen  bg-[rgb(240,230,210)]">
+      {/* <Navbar /> */}
+      <HeroSection />
+      {/* <GallerySection/> */}
+      <ProductsSection/>
+      <LatestArrivalsSection/>
+      <FeaturedProducts />
+      <div className='pb-10 pt-6 md:p-6'>
+      <HolidaySaleBanner />
       </div>
-    </BannerProvider>
+      
+      <Footer />
+    </div>
   );
 }
