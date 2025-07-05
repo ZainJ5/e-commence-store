@@ -44,7 +44,7 @@ export default function Navbar() {
                   fontFamily: "Playfair Display, Garamond, 'Times New Roman', serif", 
                   color: 'rgb(250, 245, 235)',
                   letterSpacing: '0.12em',
-                  fontSize: '36px',
+                  fontSize: 'clamp(22px, 4vw, 36px)', // Responsive font size
                   fontWeight: '700',
                   textShadow: '0 3px 8px rgba(0,0,0,0.4)',
                   background: 'linear-gradient(135deg, #f0e6d2 0%, #e8dcc0 50%, #d4c5a0 100%)',
@@ -164,11 +164,9 @@ export default function Navbar() {
                   fontFamily: "Playfair Display, Garamond, 'Times New Roman', serif", 
                   color: 'rgb(250, 245, 235)',
                   letterSpacing: '0.12em',
-                  fontSize: '28px',
+                  fontSize: '24px', // Reduced from 28px
                   fontWeight: '700',
                   textShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                  // WebkitBackgroundClip: 'text',
-                  // WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text'
                 }}
               >

@@ -189,11 +189,11 @@ export default function ProductsSection() {
                 display: none;
               }
             `}</style>
-            <div className="flex gap-8 pb-4" style={{ width: 'max-content' }}>
+            <div className="flex gap-3 sm:gap-4 lg:gap-8 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product) => (
-                <div key={product._id} className="group flex-shrink-0 w-80">
-                  {/* Image Container - Larger size, no rounded container */}
-                  <div className="relative mb-4 cursor-pointer bg-white" 
+                <div key={product._id} className="group flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-80">
+                  {/* Image Container - Responsive sizing */}
+                  <div className="relative mb-3 lg:mb-4 cursor-pointer bg-white" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
                     <div className="aspect-square w-full overflow-hidden bg-gray-50">
@@ -205,38 +205,38 @@ export default function ProductsSection() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <svg className="w-20 h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
                       )}
                     </div>
                     
-                    {/* NEW Badge - positioned like in your image */}
+                    {/* NEW Badge - responsive sizing */}
                     {product.isNew && (
-                      <div className="absolute top-4 left-4 bg-green-600 text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
+                      <div className="absolute top-2 left-2 lg:top-4 lg:left-4 bg-green-600 text-white text-xs font-semibold px-2 py-1 lg:px-3 lg:py-1.5 rounded-sm">
                         NEW
                       </div>
                     )}
                     
-                    {/* Discount Badge */}
+                    {/* Discount Badge - responsive sizing */}
                     {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                      <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
+                      <div className="absolute top-2 right-2 lg:top-4 lg:right-4 bg-red-600 text-white text-xs font-semibold px-2 py-1 lg:px-3 lg:py-1.5 rounded-sm">
                         {calculateDiscount(product.originalPrice, product.discountedPrice)}
                       </div>
                     )}
 
-                    {/* Wishlist Button */}
+                    {/* Wishlist Button - responsive sizing */}
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleWishlist(product._id);
                       }}
-                      className="absolute top-4 right-4 p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-sm"
+                      className="absolute top-2 right-2 lg:top-4 lg:right-4 p-1.5 lg:p-2 bg-white/90 hover:bg-white rounded-full transition-colors duration-200 shadow-sm"
                       style={{ display: !(product.discountedPrice && product.discountedPrice < product.originalPrice) ? 'block' : 'none' }}
                     >
                       <svg 
-                        className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} 
+                        className={`w-3 h-3 lg:w-4 lg:h-4 ${wishlist.includes(product._id) ? 'text-red-500 fill-current' : 'text-gray-600'}`} 
                         fill={wishlist.includes(product._id) ? 'currentColor' : 'none'} 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -246,28 +246,28 @@ export default function ProductsSection() {
                     </button>
                   </div>
 
-                  {/* Product Info - Clean and minimal like in your image */}
-                  <div className="text-center space-y-2">
+                  {/* Product Info - Responsive text sizing */}
+                  <div className="text-center space-y-1 lg:space-y-2">
                     <Link href={`/products/${product._id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide" 
+                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-2" 
                           style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
                     </Link>
                     
-                    {/* Price */}
-                    <div className="flex justify-center items-center space-x-2">
+                    {/* Price - responsive sizing */}
+                    <div className="flex justify-center items-center space-x-1 lg:space-x-2">
                       {product.discountedPrice ? (
                         <>
-                          <span className="text-gray-900 font-medium text-base">{formatPrice(product.discountedPrice)}</span>
-                          <span className="text-gray-400 line-through text-sm">{formatPrice(product.originalPrice)}</span>
+                          <span className="text-gray-900 font-medium text-sm lg:text-base">{formatPrice(product.discountedPrice)}</span>
+                          <span className="text-gray-400 line-through text-xs lg:text-sm">{formatPrice(product.originalPrice)}</span>
                         </>
                       ) : (
-                        <span className="text-gray-900 font-medium text-base">{formatPrice(product.originalPrice)}</span>
+                        <span className="text-gray-900 font-medium text-sm lg:text-base">{formatPrice(product.originalPrice)}</span>
                       )}
                     </div>
                     
-                    {/* Stock Status */}
+                    {/* Stock Status - responsive sizing */}
                     {(product.stock === 0 || product.stock < 5) && (
                       <div className="text-xs">
                         <span className={`${product.stock === 0 ? 'text-red-600' : 'text-amber-600'} font-medium`}>
