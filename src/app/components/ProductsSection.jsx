@@ -193,7 +193,7 @@ export default function ProductsSection() {
               {filteredProducts.map((product) => (
                 <div key={product._id} className="group bg-white/80 backdrop-blur-sm rounded-lg p-4 flex-shrink-0 w-64 sm:w-72 lg:w-80 shadow-sm">
                   {/* Product Image Container - SIMPLIFIED */}
-                  <div className="relative aspect-[4/5] overflow-hidden bg-gray-50 mb-4 cursor-pointer rounded-lg" 
+                  <div className="relative overflow-hidden bg-gray-50 mb-4 cursor-pointer rounded-lg" 
                        onClick={() => window.location.href = `/products/${product._id}`}>
                     
                     {/* Just the image - NO overlays */}
@@ -201,7 +201,7 @@ export default function ProductsSection() {
                       <img 
                         src={product.image} 
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 rounded-lg"
+                        className="w-full h-full object-cover transition-transform duration-700 rounded-lg"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center rounded-lg">
