@@ -100,238 +100,251 @@ export default function PremiumCarousel() {
   }, [autoplay, isHovered, activeIndex]);
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center p-4" 
+    <div className="w-full pt-16 lg:pt-20 pb-8" 
          style={{ fontFamily: "'Montserrat', sans-serif", backgroundColor: 'rgb(240, 230, 210)' }}>
-      <div className="relative w-full max-w-7xl">
-        {/* Navigation buttons */}
-        <button 
-          onClick={prevSlide}
-          className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-emerald-100 flex items-center justify-center text-emerald-800 hover:bg-emerald-50/80 hover:shadow-lg transition-all duration-500 ease-out group"
-          aria-label="Previous product"
-          disabled={isTransitioning}
-        >
-          <ChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform duration-300" />
-          <span className="sr-only">Previous</span>
-        </button>
-        
-        <button 
-          onClick={nextSlide}
-          className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-emerald-100 flex items-center justify-center text-emerald-800 hover:bg-emerald-50/80 hover:shadow-lg transition-all duration-500 ease-out group"
-          aria-label="Next product"
-          disabled={isTransitioning}
-        >
-          <ChevronRight size={20} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-          <span className="sr-only">Next</span>
-        </button>
-        
-        {/* Carousel container - now transparent with no visible box */}
-        <motion.div 
-          className="relative h-[700px] overflow-hidden"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          {/* Added transition animation for carousel background - now transparent */}
-          <motion.div
-            className="absolute inset-0"
-            key={`bg-${activeIndex}`}
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            style={{ 
-              backgroundImage: `radial-gradient(circle at ${50 + direction * 10}% 50%, rgba(240,230,210,0), rgba(220,210,190,0))`,
-            }}
-          />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
+        <div className="text-center lg:text-left mb-8 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-black mb-2" 
+              style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+            FEATURED PRODUCTS
+          </h2>
+          <p className="text-sm text-gray-600 font-light tracking-wide uppercase">
+            Discover our premium collection
+          </p>
+        </div>
+
+        <div className="relative w-full">
+          {/* Navigation buttons */}
+          <button 
+            onClick={prevSlide}
+            className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-emerald-100 flex items-center justify-center text-emerald-800 hover:bg-emerald-50/80 hover:shadow-lg transition-all duration-500 ease-out group"
+            aria-label="Previous product"
+            disabled={isTransitioning}
+          >
+            <ChevronLeft size={20} className="group-hover:-translate-x-0.5 transition-transform duration-300" />
+            <span className="sr-only">Previous</span>
+          </button>
           
-          <div className="absolute inset-0 flex items-center justify-center perspective-[1200px]">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`active-product-${activeIndex}`}
-                className="absolute z-30"
-                initial={{ opacity: 0, x: direction * 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction * -50 }}
-                transition={{ 
-                  type: "spring",
-                  stiffness: 300, 
-                  damping: 30,
-                  duration: 0.5 
-                }}
-              >
-              </motion.div>
-            </AnimatePresence>
+          <button 
+            onClick={nextSlide}
+            className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-14 sm:h-14 rounded-full bg-white/10 backdrop-blur-md border border-emerald-100 flex items-center justify-center text-emerald-800 hover:bg-emerald-50/80 hover:shadow-lg transition-all duration-500 ease-out group"
+            aria-label="Next product"
+            disabled={isTransitioning}
+          >
+            <ChevronRight size={20} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+            <span className="sr-only">Next</span>
+          </button>
+          
+          {/* Carousel container - now transparent with no visible box */}
+          <motion.div 
+            className="relative h-[700px] overflow-hidden"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Added transition animation for carousel background - now transparent */}
+            <motion.div
+              className="absolute inset-0"
+              key={`bg-${activeIndex}`}
+              initial={{ opacity: 0.5 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+              style={{ 
+                backgroundImage: `radial-gradient(circle at ${50 + direction * 10}% 50%, rgba(240,230,210,0), rgba(220,210,190,0))`,
+              }}
+            />
             
-            {products.map((product, index) => {
-              const position = (index - activeIndex + products.length) % products.length;
-              const isActive = position === 0;
-              
-              // Calculate positioning - Adjust for responsive without changing height
-              let translateX = 0;
-              let translateZ = 0;
-              let scale = 1;
-              let opacity = 1;
-              let blur = 0;
-              
-              // Adjust positioning based on screen width
-              const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-              const isTablet = typeof window !== 'undefined' && window.innerWidth >= 640 && window.innerWidth < 1024;
-              
-              if (position === 0) {
-                // Center image
-                translateX = 0;
-                translateZ = 0;
-                scale = 1;
-                opacity = 1;
-                blur = 0;
-              } else if (position === 1) {
-                // Right side - adjust position for smaller screens
-                translateX = isMobile ? 260 : isTablet ? 300 : 350;
-                translateZ = -180;
-                scale = isMobile ? 0.85 : 0.8;
-                opacity = 0.6;
-                blur = 1;
-              } else if (position === products.length - 1) {
-                // Left side - adjust position for smaller screens
-                translateX = isMobile ? -260 : isTablet ? -300 : -350;
-                translateZ = -180;
-                scale = isMobile ? 0.85 : 0.8;
-                opacity = 0.6;
-                blur = 1;
-              } else if (position === 2) {
-                // Far right - move further or hide on mobile
-                translateX = isMobile ? 450 : isTablet ? 520 : 600;
-                translateZ = -300;
-                scale = isMobile ? 0.7 : 0.6;
-                opacity = isMobile ? 0.15 : 0.3;
-                blur = 2;
-              } else if (position === products.length - 2) {
-                // Far left - move further or hide on mobile
-                translateX = isMobile ? -450 : isTablet ? -520 : -600;
-                translateZ = -300;
-                scale = isMobile ? 0.7 : 0.6;
-                opacity = isMobile ? 0.15 : 0.3;
-                blur = 2;
-              } else {
-                // Hidden images
-                translateX = position > products.length / 2 ? -800 : 800;
-                translateZ = -400;
-                scale = 0.4;
-                opacity = 0;
-                blur = 3;
-              }
-              
-              return (
+            <div className="absolute inset-0 flex items-center justify-center perspective-[1200px]">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={product.id}
-                  className="absolute w-[90%] sm:w-80 md:w-88 lg:w-96 h-[540px] cursor-pointer transform-gpu"
-                  style={{
-                    transform: `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale})`,
-                    opacity,
-                    filter: `blur(${blur}px)`,
-                    zIndex: isActive ? 20 : 10 - Math.abs(position),
-                    maxWidth: isMobile ? "260px" : isTablet ? "300px" : "384px", // Prevent cards from being too wide on mobile
-                  }}
-                  onClick={() => goToSlide(index)}
-                  // Removed the hover effect that was causing blur/scale issues
-                  transition={{
-                    duration: 0.7,
-                    ease: [0.23, 1, 0.32, 1], // Custom cubic bezier for premium feel
-                  }}
-                  // Added animation for smoother transitions when changing slides
-                  animate={{
-                    x: translateX,
-                    z: translateZ,
-                    scale,
-                    opacity,
-                    filter: `blur(${blur}px)`,
+                  key={`active-product-${activeIndex}`}
+                  className="absolute z-30"
+                  initial={{ opacity: 0, x: direction * 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: direction * -50 }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 300, 
+                    damping: 30,
+                    duration: 0.5 
                   }}
                 >
-                  <div className="relative w-full h-full rounded-xl overflow-hidden shadow-[0_15px_50px_-15px_rgba(0,0,0,0.2)]">
-                    {/* Image container with aspect ratio */}
-                    <div className="relative w-full h-full">
-                      <img
-                        src={product.src}
-                        alt={product.title}
-                        className="w-full h-full object-cover"
-                        loading={isActive ? "eager" : "lazy"}
-                      />
-                      
-                      {/* Gradient overlay for better text visibility */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/70 via-transparent to-transparent opacity-80" />
-                      
-                      {/* Product info - only show on active slide with improved layout */}
-                      {isActive && (
-                        <motion.div 
-                          className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8 text-white"
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ delay: 0.3, duration: 0.5 }}
-                          key={`info-${product.id}`}
-                        >
-                          <div className="text-xs sm:text-sm font-light tracking-wider uppercase mb-1 text-white/80 line-clamp-1">
-                            {product.collection}
-                          </div>
-                          <h3 className="text-xl sm:text-2xl font-bold tracking-wide mb-2 line-clamp-2">{product.title}</h3>
-                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
-                            <motion.p 
-                              className="text-lg sm:text-xl"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.4, duration: 0.4 }}
-                            >
-                              {product.price}
-                            </motion.p>
-                            <div className="flex space-x-2 sm:space-x-4">
-                              <motion.button 
-                                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500/20 backdrop-blur-md flex items-center justify-center hover:bg-emerald-500/30 transition-all duration-300"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  // Add to wishlist logic
-                                }}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                <Heart size={isMobile ? 14 : 16} className="text-white" />
-                              </motion.button>
-                              <motion.button 
-                                className="py-1.5 sm:py-2 px-4 sm:px-6 rounded-full bg-white text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-center hover:bg-emerald-50 transition-all duration-300"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setShowQuickView(true);
-                                }}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.98 }}
-                                initial={{ opacity: 0, x: 10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.5, duration: 0.4 }}
-                              >
-                                <span>View Details</span>
-                              </motion.button>
-                            </div>
-                          </div>
-                        </motion.div>
-                      )}
-                      
-                      {/* Overlay for non-active images */}
-                      {!isActive && (
-                        <div className="absolute inset-0 bg-black/30 transition-opacity duration-500" />
-                      )}
-                      
-                      {/* Active image styling */}
-                      {isActive && (
-                        <div className="absolute inset-0 rounded-xl ring-1 ring-emerald-400/40 ring-offset-0" />
-                      )}
-                    </div>
-                  </div>
                 </motion.div>
-              );
-            })}
-          </div>
-        </motion.div>
-        
+              </AnimatePresence>
+              
+              {products.map((product, index) => {
+                const position = (index - activeIndex + products.length) % products.length;
+                const isActive = position === 0;
+                
+                // Calculate positioning - Adjust for responsive without changing height
+                let translateX = 0;
+                let translateZ = 0;
+                let scale = 1;
+                let opacity = 1;
+                let blur = 0;
+                
+                // Adjust positioning based on screen width
+                const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+                const isTablet = typeof window !== 'undefined' && window.innerWidth >= 640 && window.innerWidth < 1024;
+                
+                if (position === 0) {
+                  // Center image
+                  translateX = 0;
+                  translateZ = 0;
+                  scale = 1;
+                  opacity = 1;
+                  blur = 0;
+                } else if (position === 1) {
+                  // Right side - adjust position for smaller screens
+                  translateX = isMobile ? 260 : isTablet ? 300 : 350;
+                  translateZ = -180;
+                  scale = isMobile ? 0.85 : 0.8;
+                  opacity = 0.6;
+                  blur = 1;
+                } else if (position === products.length - 1) {
+                  // Left side - adjust position for smaller screens
+                  translateX = isMobile ? -260 : isTablet ? -300 : -350;
+                  translateZ = -180;
+                  scale = isMobile ? 0.85 : 0.8;
+                  opacity = 0.6;
+                  blur = 1;
+                } else if (position === 2) {
+                  // Far right - move further or hide on mobile
+                  translateX = isMobile ? 450 : isTablet ? 520 : 600;
+                  translateZ = -300;
+                  scale = isMobile ? 0.7 : 0.6;
+                  opacity = isMobile ? 0.15 : 0.3;
+                  blur = 2;
+                } else if (position === products.length - 2) {
+                  // Far left - move further or hide on mobile
+                  translateX = isMobile ? -450 : isTablet ? -520 : -600;
+                  translateZ = -300;
+                  scale = isMobile ? 0.7 : 0.6;
+                  opacity = isMobile ? 0.15 : 0.3;
+                  blur = 2;
+                } else {
+                  // Hidden images
+                  translateX = position > products.length / 2 ? -800 : 800;
+                  translateZ = -400;
+                  scale = 0.4;
+                  opacity = 0;
+                  blur = 3;
+                }
+                
+                return (
+                  <motion.div
+                    key={product.id}
+                    className="absolute w-[90%] sm:w-80 md:w-88 lg:w-96 h-[540px] cursor-pointer transform-gpu"
+                    style={{
+                      transform: `translateX(${translateX}px) translateZ(${translateZ}px) scale(${scale})`,
+                      opacity,
+                      filter: `blur(${blur}px)`,
+                      zIndex: isActive ? 20 : 10 - Math.abs(position),
+                      maxWidth: isMobile ? "260px" : isTablet ? "300px" : "384px", // Prevent cards from being too wide on mobile
+                    }}
+                    onClick={() => goToSlide(index)}
+                    // Removed the hover effect that was causing blur/scale issues
+                    transition={{
+                      duration: 0.7,
+                      ease: [0.23, 1, 0.32, 1], // Custom cubic bezier for premium feel
+                    }}
+                    // Added animation for smoother transitions when changing slides
+                    animate={{
+                      x: translateX,
+                      z: translateZ,
+                      scale,
+                      opacity,
+                      filter: `blur(${blur}px)`,
+                    }}
+                  >
+                    <div className="relative w-full h-full rounded-xl overflow-hidden shadow-[0_15px_50px_-15px_rgba(0,0,0,0.2)]">
+                      {/* Image container with aspect ratio */}
+                      <div className="relative w-full h-full">
+                        <img
+                          src={product.src}
+                          alt={product.title}
+                          className="w-full h-full object-cover"
+                          loading={isActive ? "eager" : "lazy"}
+                        />
+                        
+                        {/* Gradient overlay for better text visibility */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/70 via-transparent to-transparent opacity-80" />
+                        
+                        {/* Product info - only show on active slide with improved layout */}
+                        {isActive && (
+                          <motion.div 
+                            className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8 text-white"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            transition={{ delay: 0.3, duration: 0.5 }}
+                            key={`info-${product.id}`}
+                          >
+                            <div className="text-xs sm:text-sm font-light tracking-wider uppercase mb-1 text-white/80 line-clamp-1">
+                              {product.collection}
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-bold tracking-wide mb-2 line-clamp-2">{product.title}</h3>
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
+                              <motion.p 
+                                className="text-lg sm:text-xl"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4, duration: 0.4 }}
+                              >
+                                {product.price}
+                              </motion.p>
+                              <div className="flex space-x-2 sm:space-x-4">
+                                <motion.button 
+                                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500/20 backdrop-blur-md flex items-center justify-center hover:bg-emerald-500/30 transition-all duration-300"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Add to wishlist logic
+                                  }}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.95 }}
+                                >
+                                  <Heart size={isMobile ? 14 : 16} className="text-white" />
+                                </motion.button>
+                                <motion.button 
+                                  className="py-1.5 sm:py-2 px-4 sm:px-6 rounded-full bg-white text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-center hover:bg-emerald-50 transition-all duration-300"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowQuickView(true);
+                                  }}
+                                  whileHover={{ scale: 1.05 }}
+                                  whileTap={{ scale: 0.98 }}
+                                  initial={{ opacity: 0, x: 10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: 0.5, duration: 0.4 }}
+                                >
+                                  <span>View Details</span>
+                                </motion.button>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                        
+                        {/* Overlay for non-active images */}
+                        {!isActive && (
+                          <div className="absolute inset-0 bg-black/30 transition-opacity duration-500" />
+                        )}
+                        
+                        {/* Active image styling */}
+                        {isActive && (
+                          <div className="absolute inset-0 rounded-xl ring-1 ring-emerald-400/40 ring-offset-0" />
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </div>
       </div>
       
       {/* Quick view modal - improved for mobile */}
