@@ -32,6 +32,9 @@ export default function Navbar() {
             : 'bg-transparent py-6'
         }`}
       >
+        {/* Complete thin line with elegant color */}
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/20"></div>
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Mobile Layout */}
           <div className="flex items-center justify-between h-16 lg:hidden">
