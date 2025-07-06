@@ -105,7 +105,7 @@ export default function PremiumCarousel() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center lg:text-left mb-8 lg:mb-12">
+        <div className="text-center lg:text-left mb-2">
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-black mb-2" 
               style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
             FEATURED PRODUCTS
