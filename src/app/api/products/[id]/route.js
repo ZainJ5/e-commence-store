@@ -33,7 +33,6 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
-    // Handle image upload if there's a new image
     const image = data.get('image');
     let imageUrl = product.image; // Keep existing image by default
     
