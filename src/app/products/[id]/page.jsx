@@ -1,7 +1,11 @@
-'use client';
+"use client"
+
+
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -17,7 +21,6 @@ export default function ProductPage() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
-
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   useEffect(() => {
@@ -42,7 +45,6 @@ export default function ProductPage() {
         setIsLoading(false);
       }
     };
-
     fetchProduct();
   }, [params.id]);
 
@@ -52,7 +54,7 @@ export default function ProductPage() {
 
   const calculateDiscount = (original, discounted) => {
     if (!discounted || discounted >= original) return null;
-    const percentage = Math.round((1 - discounted / original) * 100);
+    const percentage = Math.round(((original - discounted) / original) * 100);
     return percentage;
   };
 
@@ -84,14 +86,18 @@ export default function ProductPage() {
       cart = [...cart, cartItem];
     }
     localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Added to bag successfully!');
+    alert('Added to Cart successfully!');
     router.push('/cart');
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f5f0e6] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin"></div>
+      <div className="min-h-screen bg-[rgb(240,230,210)] flex items-center justify-center">
+        <motion.div
+          className="w-12 h-12 border-4 border-gray-200 border-t-gray-800 rounded-full"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+        ></motion.div>
       </div>
     );
   }
@@ -101,12 +107,17 @@ export default function ProductPage() {
       <div className="min-h-screen bg-[#f5f0e6] flex flex-col">
         <Navbar />
         <div className="flex-1 flex items-center justify-center pt-20">
-          <div className="text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="text-center"
+          >
             <h1 className="text-4xl font-light text-gray-900 mb-6 tracking-tight">Product Not Found</h1>
             <Link href="/collections" className="text-gray-900 font-light hover:text-amber-600 text-lg transition-colors duration-300">
               Back to Collections
             </Link>
-          </div>
+          </motion.div>
         </div>
         <Footer />
       </div>
@@ -117,20 +128,32 @@ export default function ProductPage() {
     <div className="min-h-screen bg-[#f5f0e6] font-sans">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
-        {/* Breadcrumb */}
-        <nav className="flex items-center space-x-2 text-sm font-light text-gray-600 mb-10">
+        <motion.nav
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center space-x-2 text-sm font-light text-gray-600 mb-10"
+        >
           <Link href="/" className="hover:text-amber-600 transition-colors duration-300">Home</Link>
           <span>/</span>
           <Link href="/collections" className="hover:text-amber-600 transition-colors duration-300">Collections</Link>
           <span>/</span>
           <span className="text-gray-900 font-light">{product.name}</span>
-        </nav>
+        </motion.nav>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
-          <div className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+          >
             <div className="aspect-w-3 aspect-h-4 bg-white rounded-2xl overflow-hidden shadow-lg">
               {product.images?.length > 0 ? (
-                <img
+                <motion.img
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1 }}
                   src={product.images[selectedImage]}
                   alt={`${product.name} - Image ${selectedImage + 1}`}
                   className="w-full h-full object-cover"
@@ -144,14 +167,18 @@ export default function ProductPage() {
               )}
             </div>
             {product.images?.length > 1 && (
-              <div className="grid grid-cols-5 gap-3">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.5 }}
+                className="grid grid-cols-5 gap-3"
+              >
                 {product.images.map((img, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`aspect-square rounded-xl overflow-hidden border-2 ${
-                      selectedImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200'
-                    } hover:border-gray-800 hover:shadow-md transition-all duration-300`}
+                    className={`aspect-square rounded-xl overflow-hidden border-2 ${selectedImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200'
+                      } hover:border-gray-800 hover:shadow-md transition-all duration-300`}
                   >
                     <img
                       src={img}
@@ -160,26 +187,51 @@ export default function ProductPage() {
                     />
                   </button>
                 ))}
-              </div>
+              </motion.div>
             )}
-          </div>
-          {/* Product Info */}
-          <div className="space-y-8">
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-8"
+          >
             <div>
               <div className="flex justify-between items-center">
-                <h1 className="text-4xl font-light text-gray-900 tracking-tight leading-tight">
+                <motion.h1
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-4xl font-light text-gray-900 tracking-tight leading-tight"
+                >
                   {product.name || 'Belted Shearling Coat'}
-                </h1>
+                </motion.h1>
                 {product.isActive && (
-                  <span className="inline-block bg-gray-800 text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest">
+                  <motion.span
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                    className="inline-block bg-gray-800 text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest"
+                  >
                     New Arrival
-                  </span>
+                  </motion.span>
                 )}
               </div>
-              <p className="text-sm text-gray-600 uppercase tracking-widest mt-3">
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-sm text-gray-600 uppercase tracking-widest mt-3"
+              >
                 {product.category?.name || 'Outerwear'} • {product.gender || 'Women'}'s
-              </p>
-              <div className="flex items-center space-x-2 mt-3">
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex items-center space-x-2 mt-3"
+              >
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
                     <svg
@@ -193,10 +245,15 @@ export default function ProductPage() {
                   ))}
                 </div>
                 <span className="text-sm text-gray-600 font-light">4.9 (Based on reviews)</span>
-              </div>
+              </motion.div>
             </div>
-            {/* Price */}
-            <div className="flex items-center space-x-4">
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="flex items-center space-x-4"
+            >
               <div className="flex items-center space-x-3">
                 {product.discountedPrice ? (
                   <>
@@ -216,33 +273,42 @@ export default function ProductPage() {
                   </span>
                 )}
               </div>
-            </div>
-            {/* Stock Status */}
-            <div className="flex items-center space-x-2">
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="flex items-center space-x-2"
+            >
               <div className={`w-3 h-3 rounded-full ${product.stock > 5 ? 'bg-emerald-600' : product.stock > 0 ? 'bg-amber-600' : 'bg-red-600'}`}></div>
               <span className="text-sm font-light text-gray-700 tracking-wide">
                 {product.stock > 5 ? 'In Stock' : product.stock > 0 ? `Only ${product.stock} left` : 'Out of Stock'}
               </span>
-            </div>
-            {/* Color Selection */}
+            </motion.div>
+
             {product.color?.length > 0 && (
-              <div className="space-y-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="space-y-4"
+              >
                 <label className="text-sm font-light text-gray-900 tracking-wide">Color</label>
                 <div className="flex gap-2">
                   {product.color.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`w-6 h-6 rounded-full border-2 ${
-                        selectedColor === color ? 'border-gray-400 ring-1 ring-gray-400' : 'border-gray-300'
-                      } hover:cursor-pointer`}
+                      className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-gray-400 ring-1 ring-gray-400' : 'border-gray-300'
+                        } hover:cursor-pointer`}
                       style={{ backgroundColor: color }}
                     ></button>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             )}
-            {/* Size Selection */}
+
             {allSizes && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -260,12 +326,11 @@ export default function ProductPage() {
                       key={size}
                       onClick={() => product.size.includes(size) && setSelectedSize(size)}
                       disabled={!product.size.includes(size)}
-                      className={`px-3 py-1 border rounded-md text-sm font-light transition-all duration-300 ${
-                        !product.size.includes(size) ? 'line-through text-gray-400 cursor-not-allowed' :
-                        selectedSize === size
-                          ? 'border-black bg-black text-white'
-                          : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
-                      }`}
+                      className={`px-6 py-2 border rounded-sm text-sm font-light transition-all duration-300 ${!product.size.includes(size) ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200' :
+                          selectedSize === size
+                            ? 'border-black bg-black text-white'
+                            : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
+                        }`}
                     >
                       {size}
                     </button>
@@ -273,8 +338,14 @@ export default function ProductPage() {
                 </div>
               </div>
             )}
-            {/* Quantity */}
-            <div className="space-y-4">
+
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
+              className="space-y-4"
+            >
               <label className="text-sm font-light text-gray-900 tracking-wide">Quantity</label>
               <div className="flex items-center space-x-4">
                 <button
@@ -296,25 +367,35 @@ export default function ProductPage() {
                   </svg>
                 </button>
               </div>
-            </div>
-            {/* Action Button */}
-            <div className="space-y-4">
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.9 }}
+              className="space-y-4"
+            >
               <button
                 onClick={addToCart}
                 disabled={product.stock === 0}
                 className="w-full bg-black text-white py-3 rounded-full font-light text-sm uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {product.stock === 0 ? 'Out of Stock' : 'Add To Bag'}
+                {product.stock === 0 ? 'Out of Stock' : 'Add To Cart'}
               </button>
-            </div>
-            {/* Product Features */}
-            <div className="border-t pt-6 space-y-4">
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1 }}
+              className="border-t pt-6 space-y-4"
+            >
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div className="flex items-center space-x-2">
                   <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  <span className="text-gray-700 font-light tracking-wide">Complimentary Shipping</span>
+                  <span className="text-gray-700 font-light tracking-wide">All Over Pakistan Shipping</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -335,11 +416,16 @@ export default function ProductPage() {
                   <span className="text-gray-700 font-light tracking-wide">Premium Quality</span>
                 </div>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
-        {/* Product Details Tabs */}
-        <div className="mt-16 border-t pt-8">
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 1.1 }}
+          className="mt-16 border-t pt-8"
+        >
           <div className="flex overflow-x-auto space-x-8 border-b border-gray-200">
             {[
               { id: 'description', label: 'Description' },
@@ -350,17 +436,21 @@ export default function ProductPage() {
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id)}
-                className={`whitespace-nowrap pb-4 text-sm font-light uppercase tracking-widest transition-all duration-300 ${
-                  selectedTab === tab.id
+                className={`whitespace-nowrap pb-4 text-sm font-light uppercase tracking-widest transition-all duration-300 ${selectedTab === tab.id
                     ? 'border-gray-800 text-gray-900 border-b-2'
                     : 'border-transparent text-gray-600 hover:text-amber-600'
-                }`}
+                  }`}
               >
                 {tab.label}
               </button>
             ))}
           </div>
-          <div className="mt-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+            className="mt-8"
+          >
             {selectedTab === 'description' && (
               <div className="prose max-w-none">
                 <p className="text-gray-700 leading-relaxed text-sm font-light tracking-wide">
@@ -441,10 +531,10 @@ export default function ProductPage() {
                 </button>
               </div>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
-      {/* Size Guide Modal */}
+
       {showSizeGuide && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
           <div className="bg-transparent rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
@@ -508,6 +598,7 @@ export default function ProductPage() {
           </div>
         </div>
       )}
+
       <Footer />
     </div>
   );
