@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import GallerySection from './GallerySection';
 
-export default function HeroSection() {
+const HeroSection = () => {
   useEffect(() => {
     const setVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     };
-    
+
     setVH();
     window.addEventListener('resize', setVH);
     window.addEventListener('orientationchange', setVH);
-    
+
     return () => {
       window.removeEventListener('resize', setVH);
       window.removeEventListener('orientationchange', setVH);
@@ -22,25 +22,24 @@ export default function HeroSection() {
 
   return (
     <>
-      <div className="relative w-full overflow-hidden" style={{ height: 'calc(var(--vh, 1vh) * 100)' }}>
-        <Navbar />
+      {/* <Navbar /> */}
 
+      <div className="relative w-full overflow-hidden pt-24" style={{ height: 'calc(var(--vh, 1vh) * 100 - 6rem)' }}>
         <div className="absolute inset-0 w-full h-full">
-          <img 
-            src="/hero-section-mobile.jpg" 
+          <img
+            src="/hero-section-mobile.jpg"
             alt="Fashion Store Hero Background"
             className="w-full h-full object-cover md:hidden"
             style={{ objectPosition: 'center top' }}
           />
-          <img 
-            src="/hero-section-2.jpg" 
+          <img
+            src="/hero-section-2.jpg"
             alt="Fashion Store Hero Background"
             className="w-full h-full object-cover hidden md:block"
             style={{ objectPosition: 'center top' }}
           />
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
-
         <div className="relative w-full h-full flex flex-col justify-center items-center text-center px-6">
           <div className="max-w-5xl mx-auto">
             <p className="text-xs uppercase tracking-[0.3em] text-emerald-400 mb-6 font-light">
@@ -60,8 +59,9 @@ export default function HeroSection() {
           </div>
         </div>
       </div>
-
       {/* <GallerySection/> */}
     </>
   );
-}
+};
+
+export default HeroSection;

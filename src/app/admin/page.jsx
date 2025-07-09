@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
-import AdminPortal from '../components/AdminPortal';
+import AdminPortal from '../components/admin/AdminPortal';
 
 export default function AdminPage() {
   const router = useRouter();
