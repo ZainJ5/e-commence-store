@@ -20,9 +20,14 @@ const ProductSchema = new mongoose.Schema({
     min: [0, 'Discounted price cannot be negative']
   },
   category: {
-    type: String,
-    enum: ['tshirts', 'shirts', 'pants', 'jackets', 'dresses', 'shoes', 'accessories', ''],
-    default: ''
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+    required: [true, 'Please select a category']
+  },
+  type: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Type',
+    required: [true, 'Please select a type']
   },
   size: {
     type: [String],
@@ -38,8 +43,15 @@ const ProductSchema = new mongoose.Schema({
     enum: ['men', 'women', 'kids', 'unisex'],
     default: 'unisex'
   },
-  image: {
-    type: String
+  images: {
+    type: [String],
+    default: [],
+    validate: {
+      validator: function (images) {
+        return images.length <= 10;
+      },
+      message: 'Cannot upload more than 10 images per product'
+    }
   },
   stock: {
     type: Number,
@@ -49,12 +61,16 @@ const ProductSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  productTags: {
+    type: [String],
+    enum: ['new-arrival', 'featured', 'mr-shah-collection'],
+    default: []
   }
 }, {
   timestamps: true
 });
 
-// Check if model already exists to prevent overwrite during hot reloads in development
 const Product = mongoose.models.Product || mongoose.model('Product', ProductSchema);
 
 export default Product;
