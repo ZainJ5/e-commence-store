@@ -1,14 +1,72 @@
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/mongodb';
 import Product from '../../../models/product';
+import Category from '../../../models/categories'; // Import Category model
+import Type from '../../../models/type'; // Import Type model
 import cloudinary from '../../../lib/cloudinary';
+import jwt from 'jsonwebtoken';
+
+// Middleware to verify JWT token (for protected routes)
+const verifyToken = async (request) => {
+  try {
+    const authHeader = request.headers.get('authorization');
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null;
+    }
+    
+    const token = authHeader.split(' ')[1];
+    const secretKey = process.env.JWT_SECRET || "bcfce0c01316be944450bebe732cb858";
+    
+    if (!secretKey) {
+      console.error('JWT_SECRET not found in environment variables');
+      return null;
+    }
+    
+    const decoded = jwt.verify(token, secretKey);
+    return decoded;
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return null;
+  }
+};
+
+const uploadImages = async (images) => {
+  const uploadPromises = images.map(async (image) => {
+    const bytes = await image.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+    
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { 
+          folder: 'ecommerce-products',
+          resource_type: 'image',
+          transformation: [
+            { width: 1000, height: 1000, crop: 'limit' },
+            { quality: 'auto' }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      );
+      uploadStream.write(buffer);
+      uploadStream.end();
+    });
+  });
+  
+  return Promise.all(uploadPromises);
+};
 
 export async function GET(request, { params }) {
   try {
     await connectToDatabase();
     const { id } = params;
     
-    const product = await Product.findById(id);
+    const product = await Product.findById(id)
+      .populate('category')
+      .populate('type');
     
     if (!product) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
@@ -23,6 +81,11 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
+    const user = await verifyToken(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectToDatabase();
     const { id } = params;
     const data = await request.formData();
@@ -33,60 +96,98 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
-    const image = data.get('image');
-    let imageUrl = product.image; // Keep existing image by default
+    // Handle images
+    let imageUrls = [...(product.images || [])]; // Keep existing images by default
     
-    if (image && image instanceof File) {
-      const bytes = await image.arrayBuffer();
-      const buffer = Buffer.from(bytes);
+    // Handle existing images (if frontend specifies which to keep)
+    const existingImages = data.get('existingImages') ? JSON.parse(data.get('existingImages')) : null;
+    if (existingImages !== null) {
+      imageUrls = [...existingImages];
+    }
+    
+    // Handle new images
+    const newImages = data.getAll('images');
+    if (newImages && newImages.length > 0) {
+      const validImages = newImages.filter(img => img.size > 0);
       
-      const uploadResult = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'ecommerce-products' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.write(buffer);
-        uploadStream.end();
-      });
+      if (imageUrls.length + validImages.length > 10) {
+        return NextResponse.json({ error: 'Cannot have more than 10 images total' }, { status: 400 });
+      }
       
-      imageUrl = uploadResult.secure_url;
+      if (validImages.length > 0) {
+        const newImageUrls = await uploadImages(validImages);
+        imageUrls = [...imageUrls, ...newImageUrls];
+      }
     }
     
     // Parse arrays that were stringified for FormData
     const sizes = data.get('size') ? JSON.parse(data.get('size')) : product.size;
     const colors = data.get('color') ? JSON.parse(data.get('color')) : product.color;
+    const productTags = data.get('productTags') ? JSON.parse(data.get('productTags')) : product.productTags;
+    
+    // Validate required fields
+    const name = data.get('name') || product.name;
+    const originalPrice = data.get('originalPrice') || product.originalPrice;
+    const category = data.get('category') || product.category;
+    const type = data.get('type') || product.type;
+    const stock = data.get('stock') !== null ? data.get('stock') : product.stock;
+    
+    if (!name || !originalPrice || !category || !type || stock === null) {
+      return NextResponse.json({ 
+        error: 'Missing required fields: name, originalPrice, category, type, and stock are required' 
+      }, { status: 400 });
+    }
+
+    const discountedPrice = data.get('discountedPrice') ? parseFloat(data.get('discountedPrice')) : null;
+    
+    // Validate discounted price
+    if (discountedPrice && discountedPrice >= parseFloat(originalPrice)) {
+      return NextResponse.json({ 
+        error: 'Discounted price must be less than original price' 
+      }, { status: 400 });
+    }
     
     // Update product
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {
-        name: data.get('name') || product.name,
+        name,
         description: data.get('description') || product.description,
-        originalPrice: data.get('originalPrice') || product.originalPrice,
-        discountedPrice: data.get('discountedPrice') || null,
-        category: data.get('category') || product.category,
+        originalPrice: parseFloat(originalPrice),
+        discountedPrice,
+        category,
+        type,
         gender: data.get('gender') || product.gender,
         size: sizes,
         color: colors,
-        stock: data.get('stock') || product.stock,
-        image: imageUrl,
-        isActive: data.get('isActive') === 'true'
+        stock: parseInt(stock),
+        images: imageUrls,
+        isActive: data.get('isActive') === 'true',
+        productTags
       },
-      { new: true }
+      { new: true, runValidators: true }
     );
     
     return NextResponse.json({ product: updatedProduct }, { status: 200 });
   } catch (error) {
     console.error('PUT product error:', error);
+    
+    if (error.name === 'ValidationError') {
+      const errorMessages = Object.values(error.errors).map(err => err.message);
+      return NextResponse.json({ error: errorMessages.join(', ') }, { status: 400 });
+    }
+    
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function PATCH(request, { params }) {
   try {
+    const user = await verifyToken(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectToDatabase();
     const { id } = params;
     const data = await request.json();
@@ -97,22 +198,40 @@ export async function PATCH(request, { params }) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
+    // Validate discounted price if provided
+    if (data.discountedPrice && data.originalPrice && data.discountedPrice >= data.originalPrice) {
+      return NextResponse.json({ 
+        error: 'Discounted price must be less than original price' 
+      }, { status: 400 });
+    }
+    
     // Update only the fields provided in the request
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       { $set: data },
-      { new: true }
+      { new: true, runValidators: true }
     );
     
     return NextResponse.json({ product: updatedProduct }, { status: 200 });
   } catch (error) {
     console.error('PATCH product error:', error);
+    
+    if (error.name === 'ValidationError') {
+      const errorMessages = Object.values(error.errors).map(err => err.message);
+      return NextResponse.json({ error: errorMessages.join(', ') }, { status: 400 });
+    }
+    
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(request, { params }) {
   try {
+    const user = await verifyToken(request);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     await connectToDatabase();
     const { id } = params;
     
@@ -122,10 +241,17 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
     
-    // Delete image from Cloudinary if exists
-    if (product.image && product.image.includes('cloudinary.com')) {
-      const publicId = product.image.split('/').pop().split('.')[0];
-      await cloudinary.uploader.destroy(`ecommerce-products/${publicId}`);
+    // Delete images from Cloudinary if they exist
+    if (product.images && product.images.length > 0) {
+      const deletePromises = product.images.map(imageUrl => {
+        if (imageUrl.includes('cloudinary.com')) {
+          const publicId = imageUrl.split('/').slice(-1)[0].split('.')[0];
+          return cloudinary.uploader.destroy(`ecommerce-products/${publicId}`);
+        }
+        return Promise.resolve();
+      });
+      
+      await Promise.all(deletePromises);
     }
     
     await Product.findByIdAndDelete(id);
