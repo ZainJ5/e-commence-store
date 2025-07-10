@@ -205,6 +205,7 @@ export default function ProductsSection() {
   .products-scroll {
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
     scroll-behavior: smooth;
@@ -245,6 +246,33 @@ export default function ProductsSection() {
       transform: translateY(0);
     }
   }
+
+  .product-card {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-image-container {
+    height: 0;
+    padding-bottom: 100%; /* 1:1 Aspect Ratio */
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .product-info {
+    height: 80px; /* Fixed height for product info */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .product-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `}</style>
 
             <div className="flex gap-3 sm:gap-4 lg:gap-8 pb-4" style={{ width: 'max-content' }}>
@@ -254,12 +282,14 @@ export default function ProductsSection() {
                   className="product-card flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-80 staggered-animation"
                   style={{
                     animationDelay: `${index * 0.1}s`,
-                    animationFillMode: 'both'
+                    animationFillMode: 'both',
+                    height: 'auto' // Let height be determined by fixed child elements
                   }}
                 >
-                  <div className="relative mb-3 lg:mb-4 cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm"
+                  <div className="relative mb-3 cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm"
                     onClick={() => window.location.href = `/products/${product._id}`}>
 
+                    {/* Fixed aspect ratio container */}
                     <div className="aspect-square w-full overflow-hidden bg-gray-50">
                       {product.images && product.images.length > 0 ? (
                         <img
@@ -299,10 +329,10 @@ export default function ProductsSection() {
                       </svg>
                     </button>
                   </div>
-                  {/* Product Info */}
-                  <div className="text-center space-y-2">
+                  {/* Product Info with fixed height */}
+                  <div className="text-center h-20 flex flex-col justify-between">
                     <Link href={`/products/${product._id}`}>
-                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-2"
+                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-2 product-name"
                         style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
