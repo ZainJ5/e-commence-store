@@ -1,5 +1,4 @@
 "use client"
-
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -20,6 +19,7 @@ export default function ProductPage() {
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
   const [direction, setDirection] = useState(0);
+
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   useEffect(() => {
@@ -130,15 +130,12 @@ export default function ProductPage() {
 
   const imageVariants = {
     initial: (direction) => ({
-      opacity: 0,
       x: direction > 0 ? 50 : -50,
     }),
     animate: {
-      opacity: 1,
       x: 0,
     },
     exit: (direction) => ({
-      opacity: 0,
       x: direction < 0 ? 50 : -50,
     }),
   };
@@ -159,7 +156,6 @@ export default function ProductPage() {
           <span>/</span>
           <span className="text-gray-900 font-light">{product.name}</span>
         </motion.nav>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -215,7 +211,6 @@ export default function ProductPage() {
               </motion.div>
             )}
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -272,7 +267,6 @@ export default function ProductPage() {
                 <span className="text-sm text-gray-600 font-light">4.9 (Based on reviews)</span>
               </motion.div>
             </div>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -299,7 +293,6 @@ export default function ProductPage() {
                 )}
               </div>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -311,7 +304,6 @@ export default function ProductPage() {
                 {product.stock > 5 ? 'In Stock' : product.stock > 0 ? `Only ${product.stock} left` : 'Out of Stock'}
               </span>
             </motion.div>
-
             {product.color?.length > 0 && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -333,7 +325,6 @@ export default function ProductPage() {
                 </div>
               </motion.div>
             )}
-
             {allSizes && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -365,7 +356,6 @@ export default function ProductPage() {
                 </div>
               </div>
             )}
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -394,7 +384,6 @@ export default function ProductPage() {
                 </button>
               </div>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -409,7 +398,6 @@ export default function ProductPage() {
                 {product.stock === 0 ? 'Out of Stock' : 'Add To Cart'}
               </button>
             </motion.div>
-
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -445,7 +433,6 @@ export default function ProductPage() {
             </motion.div>
           </motion.div>
         </div>
-
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -560,7 +547,6 @@ export default function ProductPage() {
           </motion.div>
         </motion.div>
       </div>
-
       {showSizeGuide && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
           <div className="bg-transparent rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200">
@@ -624,7 +610,6 @@ export default function ProductPage() {
           </div>
         </div>
       )}
-
       <Footer />
     </div>
   );
