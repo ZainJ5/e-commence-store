@@ -1,17 +1,26 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const HeroSection = () => {
+  const initialHeightSet = useRef(false);
+
   useEffect(() => {
     const setVH = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      // Only set the height on initial load and genuine resize events, not during scroll
+      if (!initialHeightSet.current || window.innerWidth !== window.lastWidth) {
+        window.lastWidth = window.innerWidth;
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+        initialHeightSet.current = true;
+      }
     };
 
     setVH();
-    window.addEventListener('resize', setVH);
-    window.addEventListener('orientationchange', setVH);
+    
+    // Use passive event listeners to improve performance
+    window.addEventListener('resize', setVH, { passive: true });
+    window.addEventListener('orientationchange', setVH, { passive: true });
 
     return () => {
       window.removeEventListener('resize', setVH);
@@ -23,6 +32,7 @@ const HeroSection = () => {
     <div className="relative w-full overflow-hidden pt-24 lg:pt-20 xl:pt-16" 
          style={{
            height: 'calc(var(--vh, 1vh) * 100 - 6rem)',
+           willChange: 'auto', // Optimization for mobile rendering
          }}
     >
       {/* Image container */}
