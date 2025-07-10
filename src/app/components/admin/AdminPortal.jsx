@@ -13,6 +13,7 @@ export default function AdminPortal() {
   const [activeTab, setActiveTab] = useState("allProducts");
   const [siteStatus, setSiteStatus] = useState(true);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -192,93 +193,117 @@ export default function AdminPortal() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-6 sm:p-8 lg:p-10">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4 sm:p-6 lg:p-8">
       <Toaster />
-      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-2xl flex flex-col md:flex-row h-[90vh] overflow-hidden">
-        {/* Sidebar */}
-        <div
-          className="hidden md:block w-full md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6"
-          style={{
-            overflowY: "auto",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-          }}
-        >
-          <div className="flex justify-center mb-8">
-            <Image
-              src="/logo.jpg"
-              alt="ShahBazar Logo"
-              width={100}
-              height={100}
-              className="object-contain rounded-full drop-shadow-lg"
-              priority
-            />
-          </div>
-          <h2 className="text-xl font-bold mb-6 text-center text-gray-200 tracking-wide">
-            Admin Dashboard
-          </h2>
-
+      <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-2xl flex flex-col h-[90vh] overflow-hidden">
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex justify-between items-center p-4 border-b border-gray-200">
+          <h2 className="text-lg font-bold text-gray-800">Admin Dashboard</h2>
           <button
-            onClick={handleToggleSiteStatus}
-            className={`w-full text-left px-4 py-3 mb-8 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-between ${siteStatus
-                ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
-                : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
-              }`}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="text-gray-600 focus:outline-none"
           >
-            <span className="flex items-center">
-              <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-              {siteStatus ? "Store is Online" : "Store is Offline"}
-            </span>
-            <span className={`text-xs px-2 py-1 rounded-full ${siteStatus ? "bg-blue-300" : "bg-red-300"}`}>
-              {siteStatus ? "ON" : "OFF"}
-            </span>
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </button>
-
-          <div>
-            <ul className="space-y-2">
-              {menuItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center ${activeTab === item.id
-                        ? "bg-gray-700 bg-opacity-80 shadow-md transform translate-x-1 border-l-4 border-white"
-                        : "hover:bg-gray-600 hover:bg-opacity-50"
-                      }`}
-                  >
-                    <span
-                      className={`mr-3 transition-transform duration-300 ${activeTab === item.id ? "rotate-90" : ""}`}
-                    >
-                      {item.icon}
-                    </span>
-                    {item.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 p-6 sm:p-8 overflow-y-auto bg-white rounded-r-lg">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-200 pb-4">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">
-              {menuItems.find((item) => item.id === activeTab)?.label}
-            </h1>
-            <div className="text-xs sm:text-sm text-gray-600 font-medium bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-300">
-              {new Date().toLocaleString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+          {/* Sidebar */}
+          <div
+            className={`${
+              isSidebarOpen ? "block" : "hidden"
+            } md:block w-full md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 sm:p-6 absolute md:static z-20 h-full md:h-auto`}
+            style={{
+              overflowY: "auto",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+            }}
+          >
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/logo.jpg"
+                alt="ShahBazar Logo"
+                width={80}
+                height={80}
+                className="object-contain rounded-full drop-shadow-lg"
+                priority
+              />
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold mb-6 text-center text-gray-200 tracking-wide">
+              Admin Dashboard
+            </h2>
+
+            <button
+              onClick={handleToggleSiteStatus}
+              className={`w-full text-left px-4 py-3 mb-6 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-between ${
+                siteStatus
+                  ? "bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg"
+                  : "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg"
+              }`}
+            >
+              <span className="flex items-center">
+                <svg className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                {siteStatus ? "Store is Online" : "Store is Offline"}
+              </span>
+              <span className={`text-xs px-2 py-1 rounded-full ${siteStatus ? "bg-blue-300" : "bg-red-300"}`}>
+                {siteStatus ? "ON" : "OFF"}
+              </span>
+            </button>
+
+            <div>
+              <ul className="space-y-2">
+                {menuItems.map((item) => (
+                  <li key={item.id}>
+                    <button
+                      onClick={() => {
+                        setActiveTab(item.id);
+                        setIsSidebarOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 flex items-center ${
+                        activeTab === item.id
+                          ? "bg-gray-700 bg-opacity-80 shadow-md transform translate-x-1 border-l-4 border-white"
+                          : "hover:bg-gray-600 hover:bg-opacity-50"
+                      }`}
+                    >
+                      <span
+                        className={`mr-3 transition-transform duration-300 ${
+                          activeTab === item.id ? "rotate-90" : ""
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      {item.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
-          {renderContent()}
+          {/* Main Content */}
+          <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto bg-white md:rounded-r-lg">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-200 pb-4">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">
+                {menuItems.find((item) => item.id === activeTab)?.label}
+              </h1>
+              <div className="text-xs sm:text-sm text-gray-600 font-medium bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-300">
+                {new Date().toLocaleString("en-US", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </div>
+            </div>
+
+            {renderContent()}
+          </div>
         </div>
       </div>
 
