@@ -123,7 +123,7 @@ export default function ProductsSection() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-12">
           <div className="text-center lg:text-left">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-black mb-2"
-                style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+              style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
               NEW ARRIVALS
             </h2>
             <p className="text-sm text-gray-600 font-light tracking-wide uppercase mb-4">
@@ -144,14 +144,13 @@ export default function ProductsSection() {
                   <button
                     key={category.id}
                     onClick={() => handleCategoryChange(category.id)}
-                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-300 ease-in-out ${
-                      selectedCategory === category.id
+                    className={`relative z-10 px-3 py-1 text-xs font-medium rounded-full transition-colors duration-300 ease-in-out ${selectedCategory === category.id
                         ? 'text-white'
                         : 'text-gray-600 hover:text-black'
-                    }`}
+                      }`}
                     style={{
                       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-                      width: '80px' 
+                      width: '80px'
                     }}
                   >
                     {category.name}
@@ -200,69 +199,53 @@ export default function ProductsSection() {
             <span className="font-medium">No new arrival products available in this category.</span>
           </div>
         ) : (
-          <div className={`products-scroll transition-all duration-300 ease-in-out ${
-            isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
-          }`}>
+          <div className={`products-scroll transition-all duration-300 ease-in-out ${isTransitioning ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
+            }`}>
             <style jsx>{`
-              .products-scroll {
-                display: flex;
-                overflow-x: auto;
-                scrollbar-width: thin;
-                -ms-overflow-style: -ms-autohiding-scrollbar;
-                scroll-behavior: smooth;
-                padding-bottom: 10px;
-              }
+  .products-scroll {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scroll-behavior: smooth;
+  }
 
-              .products-scroll::-webkit-scrollbar {
-                height: 6px;
-                display: block;
-              }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .products-scroll::-webkit-scrollbar {
+    display: none;
+  }
 
-              .products-scroll::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.05);
-                border-radius: 3px;
-              }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
-              .products-scroll::-webkit-scrollbar-thumb {
-                background: rgba(0, 0, 0, 0.2);
-                border-radius: 3px;
-              }
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+  }
 
-              .products-scroll::-webkit-scrollbar-thumb:hover {
-                background: rgba(0, 0, 0, 0.3);
-              }
+  .staggered-animation {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+  }
 
-              @keyframes fadeIn {
-                from {
-                  opacity: 0;
-                  transform: translateY(20px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
-              }
-
-              .animate-fadeIn {
-                animation: fadeIn 0.5s ease-out;
-              }
-
-              .staggered-animation {
-                animation: fadeInUp 0.6s ease-out forwards;
-                opacity: 0;
-              }
-
-              @keyframes fadeInUp {
-                from {
-                  opacity: 0;
-                  transform: translateY(30px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateY(0);
-                }
-              }
-            `}</style>
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`}</style>
 
             <div className="flex gap-3 sm:gap-4 lg:gap-8 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product, index) => (
@@ -275,7 +258,7 @@ export default function ProductsSection() {
                   }}
                 >
                   <div className="relative mb-3 lg:mb-4 cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm"
-                       onClick={() => window.location.href = `/products/${product._id}`}>
+                    onClick={() => window.location.href = `/products/${product._id}`}>
 
                     <div className="aspect-square w-full overflow-hidden bg-gray-50">
                       {product.images && product.images.length > 0 ? (
@@ -320,7 +303,7 @@ export default function ProductsSection() {
                   <div className="text-center space-y-2">
                     <Link href={`/products/${product._id}`}>
                       <h3 className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-2"
-                          style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+                        style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
                     </Link>
