@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import useCartStore from '../../stores/cartStores'; // Import the Zustand cart store
+import { toast, Toaster } from 'react-hot-toast'; // For better notifications
 
 export default function ProductPage() {
   const params = useParams();
@@ -20,7 +22,11 @@ export default function ProductPage() {
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [addedToCart, setAddedToCart] = useState(false);
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  
+  // Get the addItem function from the Zustand cart store
+  const { addItem } = useCartStore();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -58,35 +64,36 @@ export default function ProductPage() {
   };
 
   const addToCart = () => {
+    // Validate size selection
     if (!selectedSize && product.size?.length > 0) {
-      alert('Please select a size');
+      toast.error('Please select a size');
       return;
     }
+
+    // Create item object with the structure expected by our cart store
     const cartItem = {
-      id: product._id,
+      id: `${product._id}-${selectedSize}-${selectedColor}`, // Unique ID for each variant
+      productId: product._id,
       name: product.name,
       price: product.discountedPrice || product.originalPrice,
       image: product.images?.[0] || '',
       size: selectedSize,
       color: selectedColor,
       quantity: quantity,
+      maxQuantity: product.stock, // For inventory management
     };
-    const savedCart = localStorage.getItem('cart');
-    let cart = savedCart ? JSON.parse(savedCart) : [];
-    const existingItemIndex = cart.findIndex(
-      (item) =>
-        item.id === product._id &&
-        item.size === selectedSize &&
-        item.color === selectedColor
-    );
-    if (existingItemIndex >= 0) {
-      cart[existingItemIndex].quantity += quantity;
-    } else {
-      cart = [...cart, cartItem];
-    }
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Added to Cart successfully!');
-    router.push('/cart');
+
+    // Add to cart using Zustand store
+    addItem(cartItem);
+
+    // Show success feedback
+    setAddedToCart(true);
+    toast.success('Added to cart successfully!');
+    
+    // Reset the added state after a delay
+    setTimeout(() => {
+      setAddedToCart(false);
+    }, 2000);
   };
 
   const handleImageChange = (index) => {
@@ -145,9 +152,25 @@ export default function ProductPage() {
     })
   };
 
+  const buttonVariants = {
+    idle: { scale: 1 },
+    added: { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f0e6] font-sans">
       <Navbar />
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          duration: 2000,
+          style: {
+            background: '#333',
+            color: '#fff',
+            fontWeight: 300,
+          }
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
@@ -392,13 +415,15 @@ export default function ProductPage() {
               transition={{ duration: 0.5, delay: 0.9 }}
               className="space-y-4"
             >
-              <button
+              <motion.button
                 onClick={addToCart}
                 disabled={product.stock === 0}
+                variants={buttonVariants}
+                animate={addedToCart ? "added" : "idle"}
                 className="w-full bg-black text-white py-3 rounded-full font-light text-sm uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {product.stock === 0 ? 'Out of Stock' : 'Add To Cart'}
-              </button>
+                {product.stock === 0 ? 'Out of Stock' : addedToCart ? 'Added To Cart' : 'Add To Cart'}
+              </motion.button>
             </motion.div>
             <motion.div
               initial={{ opacity: 0 }}
