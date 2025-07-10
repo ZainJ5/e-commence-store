@@ -159,7 +159,7 @@ const Cart = ({ isOpen, onClose }) => {
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="pt-6 pb-2 flex justify-between items-center">
+          <div className="pt-6 flex justify-between items-center">
             <motion.div 
               className="flex items-center" 
               initial={{ x: -20, opacity: 0 }}
