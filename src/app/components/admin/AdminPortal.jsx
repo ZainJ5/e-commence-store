@@ -66,6 +66,18 @@ export default function AdminPortal() {
     fetchStatus();
   }, []);
 
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleToggleSiteStatus = () => {
     setShowConfirmation(true);
   };
@@ -197,30 +209,52 @@ export default function AdminPortal() {
       <Toaster />
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-2xl flex flex-col h-[90vh] overflow-hidden">
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex justify-between items-center p-4 border-b border-gray-200">
+        <div className="md:hidden flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
           <h2 className="text-lg font-bold text-gray-800">Admin Dashboard</h2>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-gray-600 focus:outline-none"
+            className="text-gray-600 focus:outline-none p-2 rounded-lg hover:bg-gray-100"
+            aria-label="Toggle menu"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              {isSidebarOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              )}
             </svg>
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
+          {/* Overlay for mobile when sidebar is open */}
+          {isSidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+              onClick={() => setIsSidebarOpen(false)}
+              aria-hidden="true"
+            />
+          )}
+
           {/* Sidebar */}
           <div
             className={`${
-              isSidebarOpen ? "block" : "hidden"
-            } md:block w-full md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 sm:p-6 absolute md:static z-20 h-full md:h-auto`}
-            style={{
-              overflowY: "auto",
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-            }}
+              isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+            } fixed md:static left-0 top-0 bottom-0 w-3/4 max-w-xs md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 sm:p-6 z-30 transition-transform duration-300 ease-in-out h-full overflow-y-auto`}
           >
+            {/* Close button for mobile */}
+            <div className="md:hidden flex justify-end mb-4">
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="text-gray-300 hover:text-white p-1 rounded-full hover:bg-gray-700"
+                aria-label="Close menu"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
             <div className="flex justify-center mb-6">
               <Image
                 src="/logo.jpg"
