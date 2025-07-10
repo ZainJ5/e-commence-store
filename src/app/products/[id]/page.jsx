@@ -1,11 +1,9 @@
 "use client"
 
-
-
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -21,6 +19,7 @@ export default function ProductPage() {
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
+  const [direction, setDirection] = useState(0);
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   useEffect(() => {
@@ -90,6 +89,11 @@ export default function ProductPage() {
     router.push('/cart');
   };
 
+  const handleImageChange = (index) => {
+    setDirection(index > selectedImage ? 1 : -1);
+    setSelectedImage(index);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[rgb(240,230,210)] flex items-center justify-center">
@@ -124,6 +128,21 @@ export default function ProductPage() {
     );
   }
 
+  const imageVariants = {
+    initial: (direction) => ({
+      opacity: 0,
+      x: direction > 0 ? 50 : -50,
+    }),
+    animate: {
+      opacity: 1,
+      x: 0,
+    },
+    exit: (direction) => ({
+      opacity: 0,
+      x: direction < 0 ? 50 : -50,
+    }),
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f0e6] font-sans">
       <Navbar />
@@ -150,14 +169,20 @@ export default function ProductPage() {
           >
             <div className="aspect-w-3 aspect-h-4 bg-white rounded-2xl overflow-hidden shadow-lg">
               {product.images?.length > 0 ? (
-                <motion.img
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1 }}
-                  src={product.images[selectedImage]}
-                  alt={`${product.name} - Image ${selectedImage + 1}`}
-                  className="w-full h-full object-cover"
-                />
+                <AnimatePresence custom={direction} mode="wait">
+                  <motion.img
+                    key={selectedImage}
+                    custom={direction}
+                    variants={imageVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ duration: 0.5 }}
+                    src={product.images[selectedImage]}
+                    alt={`${product.name} - Image ${selectedImage + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </AnimatePresence>
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-50">
                   <svg className="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -176,7 +201,7 @@ export default function ProductPage() {
                 {product.images.map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => setSelectedImage(index)}
+                    onClick={() => handleImageChange(index)}
                     className={`aspect-square rounded-xl overflow-hidden border-2 ${selectedImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200'
                       } hover:border-gray-800 hover:shadow-md transition-all duration-300`}
                   >
@@ -309,42 +334,37 @@ export default function ProductPage() {
               </motion.div>
             )}
 
-            // Inside your JSX, find the size buttons section and modify it as follows:
-
-{allSizes && (
-  <div className="space-y-4">
-    <div className="flex items-center justify-between">
-      <label className="text-sm font-light text-gray-900 tracking-wide">Size</label>
-      <button
-        onClick={() => setShowSizeGuide(true)}
-        className="text-sm text-gray-600 font-light hover:text-amber-600 hover:cursor-pointer transition-colors duration-300 tracking-wide"
-      >
-        Size Guide
-      </button>
-    </div>
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-      {allSizes.map((size) => (
-        <button
-          key={size}
-          onClick={() => product.size.includes(size) && setSelectedSize(size)}
-          disabled={!product.size.includes(size)}
-          className={`flex items-center justify-center h-10 sm:h-12 px-2 sm:px-4 border-2 rounded-md text-xs sm:text-sm font-light transition-all duration-300 ${
-            !product.size.includes(size)
-              ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200'
-              : selectedSize === size
-              ? 'border-black bg-black text-white'
-              : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
-          }`}
-        >
-          {size}
-        </button>
-      ))}
-    </div>
-  </div>
-)}
-
-
-
+            {allSizes && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-light text-gray-900 tracking-wide">Size</label>
+                  <button
+                    onClick={() => setShowSizeGuide(true)}
+                    className="text-sm text-gray-600 font-light hover:text-amber-600 hover:cursor-pointer transition-colors duration-300 tracking-wide"
+                  >
+                    Size Guide
+                  </button>
+                </div>
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                  {allSizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => product.size.includes(size) && setSelectedSize(size)}
+                      disabled={!product.size.includes(size)}
+                      className={`flex items-center justify-center h-10 sm:h-12 px-2 sm:px-4 border-2 rounded-md text-xs sm:text-sm font-light transition-all duration-300 ${
+                        !product.size.includes(size)
+                          ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200'
+                          : selectedSize === size
+                          ? 'border-black bg-black text-white'
+                          : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <motion.div
               initial={{ opacity: 0 }}
@@ -443,9 +463,9 @@ export default function ProductPage() {
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id)}
                 className={`whitespace-nowrap pb-4 text-sm font-light uppercase tracking-widest transition-all duration-300 ${selectedTab === tab.id
-                    ? 'border-gray-800 text-gray-900 border-b-2'
-                    : 'border-transparent text-gray-600 hover:text-amber-600'
-                  }`}
+                  ? 'border-gray-800 text-gray-900 border-b-2'
+                  : 'border-transparent text-gray-600 hover:text-amber-600'
+                }`}
               >
                 {tab.label}
               </button>

@@ -10,7 +10,7 @@ import TopDiscountBanner from './components/DiscountSection';
 
 export default function Home() {
   return (
-    <div className="min-h-screen  bg-[rgb(240,230,210)]">
+    <div className="min-h-screen   bg-[rgb(240,230,210)]">
       <Navbar />
       <HeroSection />
       {/* <GallerySection/> */}
