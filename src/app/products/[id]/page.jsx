@@ -212,7 +212,7 @@ export default function ProductPage() {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                    className="inline-block bg-gray-800 text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest"
+                    className="inline-block bg-gray-800 text-center text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest"
                   >
                     New Arrival
                   </motion.span>
@@ -263,7 +263,7 @@ export default function ProductPage() {
                     <span className="text-lg text-gray-500 line-through font-light">
                       {formatPrice(product.originalPrice)}
                     </span>
-                    <span className="bg-amber-600 text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest">
+                    <span className="bg-amber-600 text-white text-xs font-light text-center uppercase px-4 py-2 rounded-full tracking-widest">
                       {calculateDiscount(product.originalPrice, product.discountedPrice)}% OFF
                     </span>
                   </>
@@ -309,35 +309,41 @@ export default function ProductPage() {
               </motion.div>
             )}
 
-            {allSizes && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-light text-gray-900 tracking-wide">Size</label>
-                  <button
-                    onClick={() => setShowSizeGuide(true)}
-                    className="text-sm text-gray-600 font-light hover:text-amber-600 hover:cursor-pointer transition-colors duration-300 tracking-wide"
-                  >
-                    Size Guide
-                  </button>
-                </div>
-                <div className="flex gap-2">
-                  {allSizes.map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => product.size.includes(size) && setSelectedSize(size)}
-                      disabled={!product.size.includes(size)}
-                      className={`px-6 py-2 border rounded-sm text-sm font-light transition-all duration-300 ${!product.size.includes(size) ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200' :
-                          selectedSize === size
-                            ? 'border-black bg-black text-white'
-                            : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
-                        }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            // Inside your JSX, find the size buttons section and modify it as follows:
+
+{allSizes && (
+  <div className="space-y-4">
+    <div className="flex items-center justify-between">
+      <label className="text-sm font-light text-gray-900 tracking-wide">Size</label>
+      <button
+        onClick={() => setShowSizeGuide(true)}
+        className="text-sm text-gray-600 font-light hover:text-amber-600 hover:cursor-pointer transition-colors duration-300 tracking-wide"
+      >
+        Size Guide
+      </button>
+    </div>
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+      {allSizes.map((size) => (
+        <button
+          key={size}
+          onClick={() => product.size.includes(size) && setSelectedSize(size)}
+          disabled={!product.size.includes(size)}
+          className={`flex items-center justify-center h-10 sm:h-12 px-2 sm:px-4 border-2 rounded-md text-xs sm:text-sm font-light transition-all duration-300 ${
+            !product.size.includes(size)
+              ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200'
+              : selectedSize === size
+              ? 'border-black bg-black text-white'
+              : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
+          }`}
+        >
+          {size}
+        </button>
+      ))}
+    </div>
+  </div>
+)}
+
+
 
 
             <motion.div
