@@ -206,13 +206,30 @@ export default function ProductsSection() {
             <style jsx>{`
               .products-scroll {
                 display: flex;
-                overflow-x: hidden;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
+                overflow-x: auto;
+                scrollbar-width: thin;
+                -ms-overflow-style: -ms-autohiding-scrollbar;
+                scroll-behavior: smooth;
+                padding-bottom: 10px;
               }
 
               .products-scroll::-webkit-scrollbar {
-                display: none;
+                height: 6px;
+                display: block;
+              }
+
+              .products-scroll::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+                border-radius: 3px;
+              }
+
+              .products-scroll::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 3px;
+              }
+
+              .products-scroll::-webkit-scrollbar-thumb:hover {
+                background: rgba(0, 0, 0, 0.3);
               }
 
               @keyframes fadeIn {
@@ -287,7 +304,7 @@ export default function ProductsSection() {
                         toggleWishlist(product._id);
                       }}
                       className="absolute top-3 right-3 p-2 bg-gray-50 hover:bg-gray-200 rounded-full transition-colors duration-200 shadow-sm"
-                      style={{ display: !(product.discountedPrice && product.discountedPrice < product.originalPrice) ? 'block' : 'none' }}
+                      style={{ display: 'none' }}
                     >
                       <svg
                         className={`w-4 h-5 text-gray-600 ${wishlist.includes(product._id) ? 'text-red-500' : ''}`}
@@ -295,7 +312,7 @@ export default function ProductsSection() {
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 0 00-6.364 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                       </svg>
                     </button>
                   </div>
