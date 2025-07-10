@@ -52,7 +52,6 @@ export default function ProductsSection() {
     { id: 'women', name: "Women's", icon: '' }
   ];
 
-  // Filter products based on selected category - include unisex in both men and women
   const filteredProducts = products.filter(product => {
     if (product.isActive === false) return false;
 
@@ -65,7 +64,6 @@ export default function ProductsSection() {
     return true;
   });
 
-  // Handle category change with fade effect
   const handleCategoryChange = (categoryId) => {
     if (categoryId === selectedCategory) return;
 
@@ -122,7 +120,6 @@ export default function ProductsSection() {
   return (
     <section className="py-16 lg:py-20 bg-[rgb(240,230,210)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-12">
           <div className="text-center lg:text-left">
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-light tracking-tight text-black mb-2"
@@ -133,10 +130,8 @@ export default function ProductsSection() {
               Discover our latest collection
             </p>
 
-            {/* Category Tabs with sliding effect */}
             <div className="flex justify-center lg:justify-start">
               <div className="relative inline-flex bg-white/50 rounded-full p-1 backdrop-blur-sm">
-                {/* Sliding background */}
                 <div
                   className="absolute top-1 h-[calc(100%-8px)] bg-black rounded-full transition-all duration-300 ease-in-out"
                   style={{
@@ -156,7 +151,7 @@ export default function ProductsSection() {
                     }`}
                     style={{
                       fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
-                      width: '80px' // Fixed width to ensure both buttons are same size
+                      width: '80px' 
                     }}
                   >
                     {category.name}
@@ -166,7 +161,6 @@ export default function ProductsSection() {
             </div>
           </div>
 
-          {/* Navigation Arrows */}
           <div className="hidden lg:flex items-center space-x-3 mt-6 lg:mt-0">
             <button
               className="w-10 h-10 rounded-full bg-black flex items-center justify-center hover:bg-gray-800 transition-all duration-300 cursor-pointer"
@@ -193,7 +187,6 @@ export default function ProductsSection() {
           </div>
         </div>
 
-        {/* Products Horizontal Scroll with Fade Effect */}
         {isLoading ? (
           <div className="flex justify-center items-center py-32">
             <div className="w-8 h-8 border-2 border-gray-200 border-t-black rounded-full animate-spin"></div>
@@ -264,7 +257,6 @@ export default function ProductsSection() {
                     animationFillMode: 'both'
                   }}
                 >
-                  {/* Image Container */}
                   <div className="relative mb-3 lg:mb-4 cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm"
                        onClick={() => window.location.href = `/products/${product._id}`}>
 
@@ -284,13 +276,11 @@ export default function ProductsSection() {
                       )}
                     </div>
 
-                    {/* Discount Badge */}
                     {product.discountedPrice && product.discountedPrice < product.originalPrice && (
                       <div className="absolute top-2 right-2 bg-red-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
                         {calculateDiscount(product.originalPrice, product.discountedPrice)}
                       </div>
                     )}
-                    {/* Wishlist Button */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
