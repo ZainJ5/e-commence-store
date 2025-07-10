@@ -5,108 +5,73 @@ const useCartStore = create(
   persist(
     (set, get) => ({
       items: [],
-      isCartOpen: false,
+      totalItems: 0,
+      totalPrice: 0,
       
-      // Add item to cart
-      addItem: (product) => {
-        const { items } = get();
-        const existingItem = items.find(
-          item => 
-            item.id === product.id && 
-            item.size === product.size && 
-            item.color === product.color
-        );
-
+      addItem: (item) => {
+        const currentItems = get().items;
+        const existingItem = currentItems.find((i) => i.id === item.id);
+        
         if (existingItem) {
-          set({
-            items: items.map(item =>
-              item.id === product.id && 
-              item.size === product.size && 
-              item.color === product.color
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-            )
-          });
+          const updatedItems = currentItems.map((i) =>
+            i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          );
+          
+          set((state) => ({
+            items: updatedItems,
+            totalItems: state.totalItems + 1,
+            totalPrice: state.totalPrice + item.price,
+          }));
         } else {
-          set({
-            items: [...items, { ...product, quantity: 1 }]
-          });
+          set((state) => ({
+            items: [...state.items, { ...item, quantity: 1 }],
+            totalItems: state.totalItems + 1,
+            totalPrice: state.totalPrice + item.price,
+          }));
         }
       },
-
-      // Remove item from cart
-      removeItem: (id, size, color) => {
-        const { items } = get();
-        set({
-          items: items.filter(
-            item => !(item.id === id && item.size === size && item.color === color)
-          )
-        });
+      
+      removeItem: (itemId) => {
+        const currentItems = get().items;
+        const itemToRemove = currentItems.find((i) => i.id === itemId);
+        
+        if (!itemToRemove) return;
+        
+        set((state) => ({
+          items: state.items.filter((i) => i.id !== itemId),
+          totalItems: state.totalItems - itemToRemove.quantity,
+          totalPrice: state.totalPrice - (itemToRemove.price * itemToRemove.quantity),
+        }));
       },
-
-      // Update item quantity
-      updateQuantity: (id, size, color, quantity) => {
-        if (quantity <= 0) {
-          get().removeItem(id, size, color);
-          return;
-        }
-
-        const { items } = get();
-        set({
-          items: items.map(item =>
-            item.id === id && item.size === size && item.color === color
-              ? { ...item, quantity }
-              : item
-          )
-        });
+      
+      updateQuantity: (itemId, quantity) => {
+        if (quantity < 1) return;
+        
+        const currentItems = get().items;
+        const itemToUpdate = currentItems.find((i) => i.id === itemId);
+        
+        if (!itemToUpdate) return;
+        
+        const quantityDifference = quantity - itemToUpdate.quantity;
+        
+        const updatedItems = currentItems.map((i) =>
+          i.id === itemId ? { ...i, quantity } : i
+        );
+        
+        set((state) => ({
+          items: updatedItems,
+          totalItems: state.totalItems + quantityDifference,
+          totalPrice: state.totalPrice + (itemToUpdate.price * quantityDifference),
+        }));
       },
-
-      // Clear cart
+      
       clearCart: () => {
-        set({ items: [] });
+        set({ items: [], totalItems: 0, totalPrice: 0 });
       },
-
-      // Toggle cart drawer
-      toggleCart: () => {
-        set(state => ({ isCartOpen: !state.isCartOpen }));
-      },
-
-      // Open cart
-      openCart: () => {
-        set({ isCartOpen: true });
-      },
-
-      // Close cart
-      closeCart: () => {
-        set({ isCartOpen: false });
-      },
-
-      // Get cart totals
-      getCartTotals: () => {
-        const { items } = get();
-        const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
-        const tax = subtotal * 0.08; // 8% tax
-        const shipping = subtotal > 100 ? 0 : 10; // Free shipping over $100
-        const total = subtotal + tax + shipping;
-
-        return {
-          subtotal,
-          tax,
-          shipping,
-          total,
-          itemCount: items.reduce((count, item) => count + item.quantity, 0)
-        };
-      },
-
-      // Get item count
-      getItemCount: () => {
-        const { items } = get();
-        return items.reduce((count, item) => count + item.quantity, 0);
-      }
     }),
     {
-      name: 'shahbazar-cart',
-      partialize: (state) => ({ items: state.items }),
+      name: 'cart-storage', 
+      getStorage: () => (typeof window !== 'undefined' ? window.localStorage : null),
     }
   )
 );

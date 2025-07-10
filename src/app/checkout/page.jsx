@@ -1,205 +1,325 @@
-'use client';
+"use client";
 import { useState } from 'react';
-import {
-  Box,
-  Container,
-  Paper,
-  Typography,
-  TextField,
-  Button,
-  Divider,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
-  Checkbox,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
-import { Lock } from '@mui/icons-material';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import useCartStore from '../stores/cartStores';
 import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import OrderSummary from '../components/OrderSummary';
+import Image from 'next/image';
+import { 
+  TextField, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel,
+  ThemeProvider,
+  createTheme
+} from '@mui/material';
 
-function CheckoutPage() {
-  const [billingAddress, setBillingAddress] = useState(true);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const inputStyles = {
-    '& .MuiOutlinedInput-root': {
-      '&.Mui-focused fieldset': {
-        borderColor: 'black',
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#000000',
+    },
+  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-root': {
+            '&:hover fieldset': {
+              borderColor: '#000000',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#000000',
+            },
+          },
+        },
       },
     },
-    '& .MuiInputLabel-root.Mui-focused': {
-      color: 'black',
-    },
+  },
+});
+
+export default function CheckoutPage() {
+  const router = useRouter();
+  const { items, totalItems, clearCart } = useCartStore();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    address: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'Pakistan',
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Process checkout - would normally send to API
+    router.push('/checkout/payment');
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 300,
+        damping: 30
+      }
+    }
+  };
+
+  if (items.length === 0) {
+    return (
+      <div className="min-h-screen bg-[#f5f0e6]">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center">
+            <h1 className="text-3xl font-medium text-black mb-6">Your Cart is Empty</h1>
+            <p className="text-black mb-8">Add some items to your cart before checking out.</p>
+            <button
+              onClick={() => router.push('/')}
+              className="px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-all"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Box sx={{ backgroundColor: '#f5f0e6', minHeight: '100vh' }}>
-      <Navbar />
-
-      <Container maxWidth="xl" sx={{ py: 4 }}>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: 3,
-        }}>
-          {/* Form Section */}
-          <Box sx={{
-            width: { xs: '100%', md: 'calc(100% - 400px)' },
-            order: { xs: 1, md: 1 }
-          }}>
-            <Paper sx={{ p: 3 }}>
-              {/* Contact Information */}
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                Contact Information
-              </Typography>
-              <TextField
-                fullWidth
-                label="Email or Phone Number"
-                variant="outlined"
-                sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, mb: 3 }}
-              />
-              {/* Shipping Address */}
-              <Typography variant="h6" gutterBottom sx={{ mt: 4, fontWeight: 600 }}>
-                Shipping Address
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 2, mb: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                <TextField
-                  fullWidth
-                  label="First Name"
-                  variant="outlined"
-                  sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Last Name"
-                  variant="outlined"
-                  sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' } }}
-                />
-              </Box>
-              <TextField
-                fullWidth
-                label="Address"
-                variant="outlined"
-                sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, mb: 2 }}
-              />
-              <TextField
-                fullWidth
-                label="Apartment, suite, etc. (optional)"
-                variant="outlined"
-                sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' }, mb: 2 }}
-              />
-              <Box sx={{ display: 'flex', gap: 2, mb: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                <TextField
-                  fullWidth
-                  label="City"
-                  variant="outlined"
-                  sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' } }}
-                />
-                <TextField
-                  fullWidth
-                  label="Postal Code"
-                  variant="outlined"
-                  sx={{ '& .MuiOutlinedInput-root': { '&.Mui-focused fieldset': { borderColor: 'black' } }, '& .MuiInputLabel-root.Mui-focused': { color: 'black' } }}
-                />
-              </Box>
-              {/* Payment Method */}
-              <Typography variant="h6" gutterBottom sx={{ mt: 4, fontWeight: 600 }}>
-                Payment Method
-              </Typography>
-              <RadioGroup defaultValue="cod">
-                <FormControlLabel
-                  value="cod"
-                  control={<Radio sx={{ '&.Mui-checked': { color: 'black' } }} />}
-                  label="Cash on Delivery (COD)"
-                />
-              </RadioGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    sx={{ '&.Mui-checked': { color: 'black' } }}
-                  />
-                }
-                label="Billing address same as shipping address"
-                sx={{ mt: 2 }}
-              />
-            </Paper>
-          </Box>
-          {/* Order Summary */}
-          <Box sx={{
-            width: { xs: '100%', md: '400px' },
-            order: { xs: 2, md: 1 },
-            position: { md: 'sticky' },
-            top: { md: '20px' },
-            alignSelf: 'flex-start'
-          }}>
-            <Paper sx={{ p: 3 }}>
-              <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                Order Summary
-              </Typography>
-              <Box sx={{ my: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                      Adi White Mehrnon Summer Tracksuit
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Size: M | Color: White
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Quantity: 1
-                    </Typography>
-                  </Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                    Rs 2,470.00
-                  </Typography>
-                </Box>
-              </Box>
-              <Divider />
-              <Box sx={{ my: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography>Subtotal</Typography>
-                  <Typography>Rs 2,470.00</Typography>
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                  <Typography>Shipping</Typography>
-                  <Typography>Rs 195.00</Typography>
-                </Box>
-              </Box>
-              <Divider />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', my: 2 }}>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>Total</Typography>
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>Rs 2,665.00</Typography>
-              </Box>
-              <Button
-                fullWidth
-                variant="contained"
-                size="large"
-                startIcon={<Lock />}
-                sx={{
-                  backgroundColor: '#000000',
-                  color: '#ffffff',
-                  '&:hover': {
-                    backgroundColor: '#333333',
-                  },
-                  py: 1.5,
-                  textTransform: 'none',
-                  fontSize: '16px',
-                  fontWeight: 600
-                }}
+    <ThemeProvider theme={theme}>
+      <div className="min-h-screen bg-[#f5f0e6]">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className="text-3xl font-medium text-black mb-2">Checkout</h1>
+            
+            {/* Progress steps */}
+            <div className="flex items-center mb-10">
+              <div className="text-black text-sm">1. Cart</div>
+              <div className="mx-3 text-black">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div className="text-black font-medium text-sm">2. Checkout</div>
+              <div className="mx-3 text-black">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+              <div className="text-black text-sm">3. Payment</div>
+            </div>
+          </motion.div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            <motion.div 
+              className="lg:col-span-2"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Checkout Form */}
+              <motion.div 
+                className="bg-white rounded-lg shadow-md p-6 mb-8"
+                variants={itemVariants}
               >
-                Complete Order
-              </Button>
-            </Paper>
-          </Box>
-        </Box>
-      </Container>
-      <Footer />
-    </Box>
-
+                <h2 className="text-xl font-medium text-black mb-6">Shipping Information</h2>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <TextField
+                      label="First Name"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        style: { color: '#000000' },
+                      }}
+                    />
+                    <TextField
+                      label="Last Name"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        style: { color: '#000000' },
+                      }}
+                    />
+                  </div>
+                  <TextField
+                    label="Email Address"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    variant="outlined"
+                    fullWidth
+                    required
+                    InputLabelProps={{
+                      style: { color: '#000000' },
+                    }}
+                  />
+                  <TextField
+                    label="Street Address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleInputChange}
+                    variant="outlined"
+                    fullWidth
+                    required
+                    InputLabelProps={{
+                      style: { color: '#000000' },
+                    }}
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <TextField
+                      label="City"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        style: { color: '#000000' },
+                      }}
+                    />
+                    <TextField
+                      label="State/Province"
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        style: { color: '#000000' },
+                      }}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <TextField
+                      label="ZIP / Postal Code"
+                      name="zipCode"
+                      value={formData.zipCode}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      fullWidth
+                      required
+                      InputLabelProps={{
+                        style: { color: '#000000' },
+                      }}
+                    />
+                    <FormControl fullWidth variant="outlined">
+                      <InputLabel id="country-select-label" style={{ color: '#000000' }}>Country</InputLabel>
+                      <Select
+                        labelId="country-select-label"
+                        id="country-select"
+                        name="country"
+                        value={formData.country}
+                        onChange={handleInputChange}
+                        label="Country"
+                      >
+                        <MenuItem value="Pakistan">Pakistan</MenuItem>
+                        <MenuItem value="India">India</MenuItem>
+                        <MenuItem value="United States">United States</MenuItem>
+                        <MenuItem value="United Kingdom">United Kingdom</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </div>
+                  <div>
+                    <button
+                      type="submit"
+                      className="w-full py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black mt-4"
+                    >
+                      Continue to Payment
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+              
+              {/* Order Items */}
+              <motion.div 
+                className="bg-white rounded-lg shadow-md p-6"
+                variants={itemVariants}
+              >
+                <h2 className="text-xl font-medium text-black mb-6">Order Items ({totalItems})</h2>
+                <ul className="divide-y divide-gray-200">
+                  {items.map((item) => (
+                    <li key={item.id} className="py-4 flex items-center">
+                      <div className="h-24 w-24 flex-shrink-0 bg-white rounded border border-gray-200 p-1">
+                        <Image
+                          src={item.image || "https://via.placeholder.com/150"}
+                          alt={item.name}
+                          width={96}
+                          height={96}
+                          className="h-full w-full object-cover object-center"
+                        />
+                      </div>
+                      <div className="ml-6 flex-1">
+                        <h3 className="text-base font-medium text-black">{item.name}</h3>
+                        <p className="text-sm text-black">
+                          Size: <span className="font-medium">{item.size}</span> • Color: <span className="font-medium">{item.color}</span>
+                        </p>
+                        <div className="flex justify-between items-center mt-2">
+                          <span className="text-sm text-black">Qty: {item.quantity}</span>
+                          <span className="text-sm font-bold text-black">${(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </motion.div>
+            
+            <motion.div 
+              className="lg:col-span-1"
+              variants={itemVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Order Summary */}
+              <div className="sticky top-6">
+                <div className="bg-white rounded-lg shadow-md">
+                  <OrderSummary showCoupon={true} isCheckoutPage={true} />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </ThemeProvider>
   );
 }
-
-export default CheckoutPage;

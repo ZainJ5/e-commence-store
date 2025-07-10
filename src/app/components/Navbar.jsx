@@ -1,11 +1,21 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import useCartStore from '../stores/cartStores';
+import Cart from './Cart';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const { totalItems } = useCartStore();
+
+  // Handle SSR
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const linkVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -20,7 +30,7 @@ const Navbar = () => {
 
   return (
     <>
-<nav className="w-full z-50 py-4 border-b border-gray-300 bg-[rgb(236,226,206)]">
+      <nav className="w-full z-50 py-4 border-b border-gray-300 bg-[rgb(236,226,206)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
             <div className="w-1/3 flex justify-start items-center">
@@ -70,7 +80,18 @@ const Navbar = () => {
             
             <div className="w-1/3 flex justify-end items-center space-x-6">
               <Search className="w-5 h-5 cursor-pointer text-black" />
-              <ShoppingCart className="w-5 h-5 cursor-pointer text-black" />
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="relative"
+                aria-label="Open cart"
+              >
+                <ShoppingCart className="w-5 h-5 cursor-pointer text-black" />
+                {mounted && totalItems > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                    {totalItems}
+                  </span>
+                )}
+              </button>
             </div>
           </div>
           
@@ -165,6 +186,9 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Shopping Cart Component */}
+      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 };
