@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -19,7 +20,6 @@ export default function ProductPage() {
   const [selectedTab, setSelectedTab] = useState('description');
   const [selectedImage, setSelectedImage] = useState(0);
   const [direction, setDirection] = useState(0);
-
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
   useEffect(() => {
@@ -130,14 +130,19 @@ export default function ProductPage() {
 
   const imageVariants = {
     initial: (direction) => ({
-      x: direction > 0 ? 50 : -50,
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0
     }),
     animate: {
       x: 0,
+      opacity: 1,
+      transition: { duration: 0.4, ease: "easeInOut" }
     },
     exit: (direction) => ({
-      x: direction < 0 ? 50 : -50,
-    }),
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+      transition: { duration: 0.4, ease: "easeInOut" }
+    })
   };
 
   return (
@@ -173,7 +178,6 @@ export default function ProductPage() {
                     initial="initial"
                     animate="animate"
                     exit="exit"
-                    transition={{ duration: 0.5 }}
                     src={product.images[selectedImage]}
                     alt={`${product.name} - Image ${selectedImage + 1}`}
                     className="w-full h-full object-cover"
@@ -198,8 +202,7 @@ export default function ProductPage() {
                   <button
                     key={index}
                     onClick={() => handleImageChange(index)}
-                    className={`aspect-square rounded-xl overflow-hidden border-2 ${selectedImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200'
-                      } hover:border-gray-800 hover:shadow-md transition-all duration-300`}
+                    className={`aspect-square rounded-xl overflow-hidden border-2 ${selectedImage === index ? 'border-gray-800 shadow-md' : 'border-gray-200'} hover:border-gray-800 hover:shadow-md transition-all duration-300`}
                   >
                     <img
                       src={img}
@@ -317,8 +320,7 @@ export default function ProductPage() {
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-gray-400 ring-1 ring-gray-400' : 'border-gray-300'
-                        } hover:cursor-pointer`}
+                      className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-gray-400 ring-1 ring-gray-400' : 'border-gray-300'} hover:cursor-pointer`}
                       style={{ backgroundColor: color }}
                     ></button>
                   ))}
