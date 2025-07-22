@@ -243,7 +243,7 @@ const ProductsDisplay = ({ products = [], title = "", description= "", hasMore =
       
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-start py-8 sm:py-16 border-b">
-          <h1 className="md:text-5xl text-4xl font-light tracking-wider text-black mb-4 font-['Playfair_Display']">{title}</h1>
+          <h1 className="md:text-5xl text-4xl font-light tracking-wider text-black mb-4 font-['serif']">{title}</h1>
           <p className="text-gray-500 text-xs sm:text-sm leading-relaxed font-light mb-8">
             {description}
           </p>
@@ -370,25 +370,25 @@ const ProductsDisplay = ({ products = [], title = "", description= "", hasMore =
               </div>
             ) : (
               <motion.div 
-                className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-12"
-                layout
-              >
-                {filteredProducts.map((product) => (
-                  <motion.div 
-                    key={product._id ? String(product._id) : `product-${Math.random()}`}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <ProductCard 
-                      product={product} 
-                      showNotification={(text) => showCartNotification(text)}
-                    />
-                  </motion.div>
-                ))}
-              </motion.div>
+  className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-2 sm:gap-x-4 md:gap-x-6 gap-y-6 sm:gap-y-12"
+  layout
+>
+  {filteredProducts.map((product) => (
+    <motion.div 
+      key={product._id ? String(product._id) : `product-${Math.random()}`}
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <ProductCard 
+        product={product} 
+        showNotification={(text) => showCartNotification(text)}
+      />
+    </motion.div>
+  ))}
+</motion.div>
             )}
             
             {hasMore && (

@@ -21,7 +21,7 @@ const ShippingForm = ({
         className="bg-gray-50 rounded-md p-6 mb-8"
         variants={itemVariants}
       >
-        <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">Contact Information</h2>
+        <h2 className="font-['serif'] text-xl text-gray-900 mb-6">Contact Information</h2>
         
         <div className="space-y-5">
           <div className="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-2">
@@ -110,7 +110,7 @@ const ShippingForm = ({
         className="bg-gray-50 rounded-md p-6 mb-8"
         variants={itemVariants}
       >
-        <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">Shipping Address</h2>
+        <h2 className="font-['serif'] text-xl text-gray-900 mb-6">Shipping Address</h2>
         
         <div className="space-y-5">
           <div>
@@ -224,7 +224,7 @@ const ShippingForm = ({
         className="bg-gray-50 rounded-md p-6 mb-8"
         variants={itemVariants}
       >
-        <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">Shipping Method</h2>
+        <h2 className="font-['serif'] text-xl text-gray-900 mb-6">Shipping Method</h2>
         
         <div className="space-y-4">
           <label className={`relative flex p-4 cursor-pointer border ${shippingMethod === 'standard' ? 'border-gray-900' : 'border-gray-200'} rounded-md hover:border-gray-300 transition-all duration-300`}>

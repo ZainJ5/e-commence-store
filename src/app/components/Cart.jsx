@@ -73,7 +73,7 @@ const Cart = ({ isOpen, onClose }) => {
             <div className="flex justify-between items-center p-5 text-black border-b border-gray-200">
               <div className="flex items-center">
                 <ShoppingBag className="w-5 h-5 mr-2" />
-                <h2 className="font-['Playfair_Display'] text-xl text-gray-900">Your Bag</h2>
+                <h2 className="font-['serif'] text-xl text-gray-900">Your Bag</h2>
                 {totalItems > 0 && (
                   <span className="ml-2 text-sm text-gray-600">({totalItems})</span>
                 )}
@@ -91,7 +91,7 @@ const Cart = ({ isOpen, onClose }) => {
               {items.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center">
                   <ShoppingBag className="w-12 h-12 text-gray-300 mb-4" />
-                  <h3 className="font-['Playfair_Display'] text-xl text-gray-900 mb-2">Your bag is empty</h3>
+                  <h3 className="font-['serif'] text-xl text-gray-900 mb-2">Your bag is empty</h3>
                   <p className="text-gray-600 mb-6 text-sm tracking-wide">Looks like you haven't added any items yet.</p>
                   <button
                     onClick={onClose}
@@ -179,8 +179,8 @@ const Cart = ({ isOpen, onClose }) => {
             {items.length > 0 && (
               <div className="p-5 bg-gray-50 border-t border-gray-200">
                 <div className="flex justify-between mb-4">
-                  <span className="font-['Playfair_Display'] text-base text-gray-900">Subtotal</span>
-                  <span className="font-['Playfair_Display'] text-base font-medium text-gray-900">
+                  <span className="font-['serif'] text-base text-gray-900">Subtotal</span>
+                  <span className="font-['serif'] text-base font-medium text-gray-900">
                     {formatPrice(totalPrice)}
                   </span>
                 </div>

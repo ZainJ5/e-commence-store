@@ -27,7 +27,7 @@ const OrderSummary = ({
         className="bg-gray-50 rounded-md p-6 mb-8"
         variants={itemVariants}
       >
-        <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">Order Summary</h2>
+        <h2 className="font-['serif'] text-xl text-gray-900 mb-6">Order Summary</h2>
         
         <div className="mb-6">
           <div className="flex justify-between mb-2">
@@ -92,8 +92,8 @@ const OrderSummary = ({
           <div className="h-px bg-gray-200 my-4"></div>
           
           <div className="flex justify-between">
-            <span className="font-['Playfair_Display'] text-base text-gray-900">Total</span>
-            <span className="font-['Playfair_Display'] text-base font-medium text-gray-900">
+            <span className="font-['serif'] text-base text-gray-900">Total</span>
+            <span className="font-['serif'] text-base font-medium text-gray-900">
               {formatPrice(activeStep === 'confirmation' ? currentOrder.payment.total : finalTotal)}
             </span>
           </div>
@@ -148,7 +148,7 @@ const OrderSummary = ({
         variants={itemVariants}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="font-['Playfair_Display'] text-base text-gray-900">Your Items</h2>
+          <h2 className="font-['serif'] text-base text-gray-900">Your Items</h2>
           <span className="text-sm text-gray-600 tracking-wide">
             {activeStep === 'confirmation' 
               ? `${currentOrder.items.length} ${currentOrder.items.length === 1 ? 'item' : 'items'}`

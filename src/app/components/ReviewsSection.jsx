@@ -127,7 +127,7 @@ export default function ReviewsSection({ productId }) {
         <>
           <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
             <div className="text-center">
-              <div className="text-5xl font-['Playfair_Display'] mb-4">{reviewData.averageRating}</div>
+              <div className="text-5xl font-['serif'] mb-4">{reviewData.averageRating}</div>
               <div className="flex items-center justify-center mb-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <svg
@@ -241,7 +241,7 @@ export default function ReviewsSection({ productId }) {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-medium font-['Playfair_Display']">
+                  <h2 className="text-2xl font-medium font-['serif']">
                     All Reviews ({reviewData.totalReviews})
                   </h2>
                   <button

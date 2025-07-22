@@ -86,7 +86,7 @@ const Navbar = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.8, ease: [0.25, 0.8, 0.25, 1] }}
-                  className="font-['Playfair_Display'] text-black text-2xl xs:text-3xl sm:text-4xl font-bold tracking-widest relative"
+                  className="font-['serif'] text-black text-2xl xs:text-3xl sm:text-4xl font-bold tracking-widest relative"
                 >
                   <span className="bg-gradient-to-r from-black to-black bg-[length:0%_2px] bg-no-repeat bg-bottom pb-2 transition-all duration-700">
                     ShahBazar
@@ -169,7 +169,7 @@ const Navbar = () => {
                   </button>
                 </div>
                 <div className="flex-1 text-center">
-                  <span className="font-['Playfair_Display'] text-2xl sm:text-3xl font-bold tracking-widest text-black">
+                  <span className="font-['serif'] text-2xl sm:text-3xl font-bold tracking-widest text-black">
                     ShahBazar
                   </span>
                 </div>

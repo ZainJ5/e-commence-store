@@ -36,7 +36,7 @@ export default function OrderConfirmation({ currentOrder, containerVariants, ite
         </div>
 
         <motion.div variants={itemVariants} className="text-center mb-8">
-          <h1 className="font-['Playfair_Display'] text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="font-['serif'] text-3xl font-bold text-gray-900 mb-2">
             Thank You For Your Order!
           </h1>
           <p className="text-gray-600">
@@ -48,7 +48,7 @@ export default function OrderConfirmation({ currentOrder, containerVariants, ite
           variants={itemVariants}
           className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200"
         >
-          <h2 className="font-['Playfair_Display'] text-xl font-bold text-gray-900 mb-4">
+          <h2 className="font-['serif'] text-xl font-bold text-gray-900 mb-4">
             Order Summary
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -76,7 +76,7 @@ export default function OrderConfirmation({ currentOrder, containerVariants, ite
 
         {/* Items purchased section */}
         <motion.div variants={itemVariants} className="mb-8">
-          <h2 className="font-['Playfair_Display'] text-xl font-bold text-gray-900 mb-4">
+          <h2 className="font-['serif'] text-xl font-bold text-gray-900 mb-4">
             Items Ordered
           </h2>
           <div className="space-y-4">
@@ -180,7 +180,7 @@ export default function OrderConfirmation({ currentOrder, containerVariants, ite
           variants={itemVariants} 
           className="mb-8 p-5 border border-green-100 bg-green-50 rounded-lg"
         >
-          <h2 className="font-['Playfair_Display'] text-xl font-bold text-gray-900 mb-3">
+          <h2 className="font-['serif'] text-xl font-bold text-gray-900 mb-3">
             Customization & Support
           </h2>
           

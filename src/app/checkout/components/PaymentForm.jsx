@@ -27,7 +27,7 @@ const PaymentForm = ({
         className="bg-gray-50 rounded-md p-6 mb-8"
         variants={itemVariants}
       >
-        <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">Payment Method</h2>
+        <h2 className="font-['serif'] text-xl text-gray-900 mb-6">Payment Method</h2>
         
         <div className="space-y-4">
           <label className={`relative flex p-4 cursor-pointer border ${paymentMethod === 'cod' ? 'border-gray-900' : 'border-gray-200'} rounded-md hover:border-gray-300 transition-all duration-300`}>
@@ -123,7 +123,7 @@ const PaymentForm = ({
           animate={{ opacity: 1, height: 'auto' }}
           transition={{ duration: 0.3, ease: [0.25, 0.8, 0.25, 1] }}
         >
-          <h2 className="font-['Playfair_Display'] text-xl text-gray-900 mb-6">
+          <h2 className="font-['serif'] text-xl text-gray-900 mb-6">
             {paymentMethod === 'easypaisa' ? 'EasyPaisa Payment Details' : 'JazzCash Payment Details'}
           </h2>
           

@@ -55,7 +55,7 @@ export default function YouMayAlsoLike({ currentProductId, category }) {
     <div className="mt-24 pt-12 border-t border-gray-200">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl md:text-3xl font-medium  tracking-tight text-gray-900">
+          <h2 className="text-2xl md:text-3xl font-medium font-['serif'] tracking-tight text-gray-900">
             You May Also Like
           </h2>
           

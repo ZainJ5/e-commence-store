@@ -90,7 +90,7 @@ const ProductCard = ({ product, showNotification }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative bg-white rounded-none overflow-hidden w-full max-w-[360px] mx-auto transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
+      className="group relative bg-white rounded-none overflow-hidden w-full transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -151,13 +151,13 @@ const ProductCard = ({ product, showNotification }) => {
         </div>
       )}
 
-      <div className="p-5 flex flex-col space-y-3">
+      <div className="p-3 sm:p-4 md:p-5 flex flex-col space-y-2 sm:space-y-3">
         <div className="text-xs uppercase tracking-wider text-gray-500 font-medium">
           {category}
         </div>
         
         <Link href={`/products/${_id}`}>
-          <h3 className="font-light text-base text-black tracking-wide hover:text-gray-600 transition-colors duration-200 line-clamp-2">
+          <h3 className="font-light text-sm sm:text-base text-black tracking-wide hover:text-gray-600 transition-colors duration-200 line-clamp-2">
             {name}
           </h3>
         </Link>
@@ -206,11 +206,11 @@ const ProductCard = ({ product, showNotification }) => {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="mt-3 w-full py-3 bg-black cursor-pointer text-white text-sm tracking-wide font-light flex items-center justify-center space-x-2 transition-all duration-300"
+          className="mt-2 sm:mt-3 w-full py-2 sm:py-3 bg-black cursor-pointer text-white text-xs sm:text-sm tracking-wide font-light flex items-center justify-center space-x-2 transition-all duration-300"
           disabled={stock === 0}
           onClick={handleAddToCart}
         >
-          <ShoppingBag className="h-4 w-4" />
+          <ShoppingBag className="h-3 w-3 sm:h-4 sm:w-4" />
           <span>{stock > 0 ? 'Add to Cart' : 'Notify Me'}</span>
         </motion.button>
       </div>

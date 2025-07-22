@@ -116,7 +116,7 @@ export default function ReviewForm({ productId, onReviewSubmitted, onClose }) {
   return (
     <div className="bg-white rounded-lg p-6 max-w-2xl w-full">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-medium font-['Playfair_Display']">Write a Review</h2>
+        <h2 className="text-2xl font-medium font-['serif']">Write a Review</h2>
         <button
           onClick={onClose}
           type="button"
