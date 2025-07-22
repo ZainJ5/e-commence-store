@@ -8,6 +8,9 @@ import ProductFormModal from "./ProductFormModal";
 import ConfirmationDialog from "./ConfirmationDialog";
 import CategoryManager from "./CategoryManager";
 import TypeManager from "./TypeManager";
+import Orders from "./Orders";
+import PromoManager from "./PromoManager";
+import { DollarSign } from 'lucide-react';
 
 export default function AdminPortal() {
   const [activeTab, setActiveTab] = useState("allProducts");
@@ -66,7 +69,6 @@ export default function AdminPortal() {
     fetchStatus();
   }, []);
 
-  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -157,6 +159,15 @@ export default function AdminPortal() {
       ),
     },
     {
+      id: "orders",
+      label: "Orders",
+      icon: (
+        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+        </svg>
+      ),
+    },
+    {
       id: "addProducts",
       label: "Add Products",
       icon: (
@@ -183,12 +194,21 @@ export default function AdminPortal() {
         </svg>
       ),
     },
+    {
+      id: "managePromos",
+      label: "Promo Codes",
+      icon: (
+        <DollarSign/>
+      ),
+    },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
       case "allProducts":
         return <Products />;
+      case "orders":
+        return <Orders />;
       case "addProducts":
         return (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200">
@@ -199,6 +219,8 @@ export default function AdminPortal() {
         return <CategoryManager />;
       case "manageTypes":
         return <TypeManager />;
+      case "managePromos":
+        return <PromoManager />;
       default:
         return <Products />;
     }
@@ -208,7 +230,6 @@ export default function AdminPortal() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 p-4 sm:p-6 lg:p-8">
       <Toaster />
       <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-2xl flex flex-col h-[90vh] overflow-hidden">
-        {/* Mobile Menu Button */}
         <div className="md:hidden flex justify-between items-center p-4 border-b border-gray-200 sticky top-0 bg-white z-10">
           <h2 className="text-lg font-bold text-gray-800">Admin Dashboard</h2>
           <button
@@ -227,7 +248,6 @@ export default function AdminPortal() {
         </div>
 
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
-          {/* Overlay for mobile when sidebar is open */}
           {isSidebarOpen && (
             <div 
               className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
@@ -236,13 +256,12 @@ export default function AdminPortal() {
             />
           )}
 
-          {/* Sidebar */}
           <div
             className={`${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
-            } fixed md:static left-0 top-0 bottom-0 w-3/4 max-w-xs md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 sm:p-6 z-30 transition-transform duration-300 ease-in-out h-full overflow-y-auto`}
+            } fixed md:static left-0 top-0 bottom-0 w-3/4 max-w-xs md:w-64 bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4 sm:p-6 z-30 transition-transform duration-300 ease-in-out h-full overflow-y-auto scrollbar-hide`}
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {/* Close button for mobile */}
             <div className="md:hidden flex justify-end mb-4">
               <button
                 onClick={() => setIsSidebarOpen(false)}
@@ -318,7 +337,6 @@ export default function AdminPortal() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto bg-white md:rounded-r-lg">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b border-gray-200 pb-4">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-gray-800 mb-4 sm:mb-0">
