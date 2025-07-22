@@ -58,54 +58,39 @@ const HeroSection = () => {
   };
 
   return (
-    <div
-      className="relative w-full overflow-hidden"
-      style={{
-        '--desktop-height': '95vh',
-      }}
-    >
+    <div className="relative w-full overflow-hidden">
       <style jsx>{`
-        /* Desktop aspect ratio (2.611) based on 1880x720 */
+        /* Responsive hero container */
         .hero-container {
-          aspect-ratio: 2.611111111111111;
-          max-height: 90vh;
+          /* Desktop styling */
+          position: relative;
+          height: 80vh;
           width: 100%;
+          max-height: 800px;
         }
         
-        /* Mobile aspect ratio (0.874) based on 800x915 */
+        /* Mobile styling - shorter height */
         @media (max-width: 767px) {
           .hero-container {
-            aspect-ratio: 0.8743169398907104;
-            max-height: none;
-            height: auto;
+            height: 60vh;
+            min-height: 400px;
+            max-height: 600px;
           }
         }
 
-        /* For very tall screens, cap the height */
-        @media (min-width: 768px) and (min-height: 900px) {
+        /* Extra small devices */
+        @media (max-width: 480px) {
           .hero-container {
-            max-height: 90vh;
-            height: auto;
+            height: 50vh;
+            min-height: 300px;
           }
         }
         
-        /* Banner image fill settings */
+        /* Banner image responsive styling */
         .banner-image {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  object-fit: contain;
-}
+          object-position: center center;
+        }
 
-@media (max-width: 767px) {
-  .banner-image {
-    object-fit: cover;
-  }
-}
-
-        
         /* Control positioning adjustments */
         .slider-controls {
           position: absolute;
@@ -122,16 +107,17 @@ const HeroSection = () => {
         {banners.map((banner, index) => (
           <div
             key={index}
-            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
-              }`}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+              currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
           >
             <Image
               src={banner.src}
               alt={banner.alt}
               fill
               priority={index === 0}
-              sizes="(max-width: 768px) 100vw, 100vw"
-              className="banner-image"
+              sizes="100vw"
+              className="banner-image object-cover"
               quality={90}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20"></div>
@@ -141,20 +127,20 @@ const HeroSection = () => {
 
       <button
         onClick={goToPrevBanner}
-        className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+        className="absolute left-2 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-1 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
         aria-label="Previous banner"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
 
       <button
         onClick={goToNextBanner}
-        className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+        className="absolute right-2 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-1 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
         aria-label="Next banner"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
@@ -163,10 +149,11 @@ const HeroSection = () => {
         {banners.map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all ${currentBanner === index
+            className={`w-2 h-2 rounded-full transition-all ${
+              currentBanner === index
                 ? 'bg-white w-4'
                 : 'bg-white/60 hover:bg-white/80'
-              }`}
+            }`}
             onClick={() => setCurrentBanner(index)}
             aria-label={`Go to slide ${index + 1}`}
           />
