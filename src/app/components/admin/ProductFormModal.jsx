@@ -6,8 +6,8 @@ import toast, { Toaster } from 'react-hot-toast';
 
 const ProductFormModal = ({ 
   product, 
-  onSubmit = () => {}, // Default fallback function
-  onCancel = () => {}, // Default fallback function
+  onSubmit = () => {}, 
+  onCancel = () => {}, 
   isInline = false 
 }) => {
   const initialFormData = {
@@ -19,8 +19,10 @@ const ProductFormModal = ({
     category: "",
     type: "",
     size: [],
-    color: [], // Changed to array for multiple colors
+    color: [], 
     gender: "unisex",
+    fabric: "",
+    customizable: false,
     stock: "",
     images: [],
     isActive: true,
@@ -29,7 +31,7 @@ const ProductFormModal = ({
 
   const [formData, setFormData] = useState(initialFormData);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [customColor, setCustomColor] = useState(""); // For adding custom colors
+  const [customColor, setCustomColor] = useState(""); 
   const [categories, setCategories] = useState([]);
   const [types, setTypes] = useState([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -57,27 +59,23 @@ const ProductFormModal = ({
     { value: 'mr-shah-collection', label: 'Mr. Shah Collection', color: 'bg-purple-100 text-purple-800 border-purple-300' }
   ];
 
-  // Function to reset form to initial state
   const resetForm = () => {
     setFormData(initialFormData);
     setImagePreviews([]);
     setCustomColor("");
     
-    // Clean up any blob URLs to prevent memory leaks
     imagePreviews.forEach(preview => {
       if (!preview.isExisting && preview.url.startsWith('blob:')) {
         URL.revokeObjectURL(preview.url);
       }
     });
     
-    // Reset file input
     const fileInput = document.querySelector('input[type="file"]');
     if (fileInput) {
       fileInput.value = '';
     }
   };
 
-  // Fetch categories from backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -106,7 +104,6 @@ const ProductFormModal = ({
     fetchCategories();
   }, []);
 
-  // Fetch types from backend
   useEffect(() => {
     const fetchTypes = async () => {
       try {
@@ -137,7 +134,6 @@ const ProductFormModal = ({
 
   useEffect(() => {
     if (product) {
-      // Editing mode - populate form with product data
       let productColors = [];
       if (product.color) {
         if (Array.isArray(product.color)) {
@@ -158,6 +154,8 @@ const ProductFormModal = ({
         size: product.size || [],
         color: productColors,
         gender: product.gender || "unisex",
+        fabric: product.fabric || "",
+        customizable: product.customizable || false,
         stock: product.stock || "",
         images: [],
         isActive: product.isActive !== false,
@@ -168,14 +166,16 @@ const ProductFormModal = ({
         setImagePreviews(product.images.map(img => ({ url: img, isExisting: true })));
       }
     } else {
-      // New product mode - ensure form is reset
       resetForm();
     }
   }, [product]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
   };
 
   const handleCheckboxChange = (e, field) => {
@@ -200,7 +200,6 @@ const ProductFormModal = ({
     });
   };
 
-  // Handle color selection (multiple colors)
   const handleColorChange = (colorName) => {
     setFormData((prev) => {
       const isSelected = prev.color.includes(colorName);
@@ -212,7 +211,6 @@ const ProductFormModal = ({
     });
   };
 
-  // Add custom color
   const handleAddCustomColor = () => {
     const trimmedColor = customColor.trim();
     if (trimmedColor && !formData.color.includes(trimmedColor)) {
@@ -224,7 +222,6 @@ const ProductFormModal = ({
     }
   };
 
-  // Remove a specific color
   const removeColor = (colorToRemove) => {
     setFormData((prev) => ({
       ...prev,
@@ -232,7 +229,6 @@ const ProductFormModal = ({
     }));
   };
 
-  // Handle Enter key for custom color input
   const handleCustomColorKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -317,7 +313,6 @@ const ProductFormModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
     if (!formData.name || !formData.originalPrice || !formData.category || !formData.type || formData.stock === "") {
       toast.error('Please fill in all required fields: Name, Original Price, Category, Type, and Stock', {
         position: 'top-right',
@@ -335,18 +330,14 @@ const ProductFormModal = ({
     try {
       const submitFormData = new FormData();
 
-      // Add all form fields to FormData
       Object.keys(formData).forEach(key => {
         if (key === 'images') {
-          // Add new images
           formData.images.forEach((file, index) => {
             submitFormData.append(`images`, file);
           });
         } else if (key === 'size' || key === 'productTags' || key === 'color') {
-          // Serialize arrays as JSON
           submitFormData.append(key, JSON.stringify(formData[key]));
         } else if (key === '_id') {
-          // Backend expects 'id' for PUT requests
           if (product && formData._id) {
             submitFormData.append('id', formData._id);
           }
@@ -355,7 +346,6 @@ const ProductFormModal = ({
         }
       });
 
-      // Handle existing images for PUT requests
       if (product) {
         const existingImages = imagePreviews
           .filter(img => img.isExisting)
@@ -383,7 +373,6 @@ const ProductFormModal = ({
 
       const data = await response.json();
       
-      // Success message
       toast.success(`Product ${product ? 'updated' : 'created'} successfully!`, {
         position: 'top-right',
         style: {
@@ -393,12 +382,10 @@ const ProductFormModal = ({
         },
       });
       
-      // Reset form only for new products (not when editing)
       if (!product) {
         resetForm();
       }
       
-      // Call onSubmit if it's a function
       if (typeof onSubmit === 'function') {
         onSubmit(data);
       } else {
@@ -421,7 +408,6 @@ const ProductFormModal = ({
 
   const handleCancel = () => {
     if (!product) {
-      // Only reset form if it's a new product
       resetForm();
     }
     
@@ -493,7 +479,6 @@ const ProductFormModal = ({
               </div>
             </div>
             
-            {/* Category and Type in a grid */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1.5">Category <span className="text-red-500">*</span></label>
@@ -619,6 +604,36 @@ const ProductFormModal = ({
                 </select>
               </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Fabric</label>
+                <input
+                  type="text"
+                  name="fabric"
+                  value={formData.fabric}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50 text-black placeholder-gray-400 text-sm transition-all"
+                  maxLength={100}
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="customizable"
+                  id="customizable"
+                  checked={formData.customizable}
+                  onChange={handleChange}
+                  className="rounded border-gray-300 text-red-600 focus:ring-red-500"
+                  disabled={isSubmitting}
+                />
+                <label htmlFor="customizable" className="ml-2 text-sm font-medium text-gray-700">
+                  Customizable
+                </label>
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Available Sizes</label>
               <div className="flex flex-wrap gap-2">
@@ -639,13 +654,10 @@ const ProductFormModal = ({
             </div>
           </div>
 
-          {/* Right Column */}
           <div className="space-y-4">
-            {/* Multiple Colors Section */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Available Colors</label>
               
-              {/* Predefined Colors */}
               <div className="space-y-3">
                 <p className="text-xs text-gray-500">Select from predefined colors:</p>
                 <div className="grid grid-cols-3 gap-2">
@@ -675,7 +687,6 @@ const ProductFormModal = ({
                 </div>
               </div>
 
-              {/* Custom Color Input */}
               <div className="mt-4">
                 <p className="text-xs text-gray-500 mb-2">Add custom color:</p>
                 <div className="flex gap-2">
@@ -699,7 +710,6 @@ const ProductFormModal = ({
                 </div>
               </div>
 
-              {/* Selected Colors Display */}
               {formData.color.length > 0 && (
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Colors ({formData.color.length}):</h4>
@@ -813,7 +823,7 @@ const ProductFormModal = ({
                 name="isActive"
                 id="isActive"
                 checked={formData.isActive}
-                onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+                onChange={handleChange}
                 className="rounded border-gray-300 text-red-600 focus:ring-red-500"
                 disabled={isSubmitting}
               />
