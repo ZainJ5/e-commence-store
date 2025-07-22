@@ -57,7 +57,7 @@ const Navbar = () => {
               
               <div className="hidden lg:flex items-center space-x-6">
                 <a 
-                  href="https://facebook.com" 
+                  href="https://www.facebook.com/share/16sn62HPUK/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="text-black transition-all duration-300 hover:text-gray-600 cursor-pointer transform hover:scale-110"
