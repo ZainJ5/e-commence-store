@@ -5,7 +5,7 @@ import Image from 'next/image';
 const HeroSection = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
   const initialHeightSet = useRef(false);
-  
+
   const banners = [
     {
       src: '/banner-1.jpg',
@@ -91,13 +91,20 @@ const HeroSection = () => {
         
         /* Banner image fill settings */
         .banner-image {
-          position: absolute;
-          height: 100%;
-          width: 100%;
-          top: 0;
-          left: 0;
-          object-fit: contain;
-        }
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  object-fit: contain;
+}
+
+@media (max-width: 767px) {
+  .banner-image {
+    object-fit: cover;
+  }
+}
+
         
         /* Control positioning adjustments */
         .slider-controls {
@@ -113,11 +120,10 @@ const HeroSection = () => {
 
       <div className="hero-container">
         {banners.map((banner, index) => (
-          <div 
-            key={index} 
-            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
-              currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
-            }`}
+          <div
+            key={index}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              }`}
           >
             <Image
               src={banner.src}
@@ -132,8 +138,8 @@ const HeroSection = () => {
           </div>
         ))}
       </div>
-      
-      <button 
+
+      <button
         onClick={goToPrevBanner}
         className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
         aria-label="Previous banner"
@@ -142,8 +148,8 @@ const HeroSection = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      
-      <button 
+
+      <button
         onClick={goToNextBanner}
         className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
         aria-label="Next banner"
@@ -152,16 +158,15 @@ const HeroSection = () => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
-      
+
       <div className="slider-controls space-x-2">
         {banners.map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all ${
-              currentBanner === index 
-                ? 'bg-white w-4' 
+            className={`w-2 h-2 rounded-full transition-all ${currentBanner === index
+                ? 'bg-white w-4'
                 : 'bg-white/60 hover:bg-white/80'
-            }`}
+              }`}
             onClick={() => setCurrentBanner(index)}
             aria-label={`Go to slide ${index + 1}`}
           />
