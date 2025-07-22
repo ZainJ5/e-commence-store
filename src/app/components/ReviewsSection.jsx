@@ -172,7 +172,7 @@ export default function ReviewsSection({ productId }) {
             </button>
           </div>
           
-          {reviewData.reviews.length === 0 ? (
+          {/* {reviewData.reviews.length === 0 ? (
             <div className="text-center py-12 border-t border-gray-100">
               <h3 className="text-lg mb-2">Be the First to Review</h3>
               <p className="text-gray-500 mb-6">Share your thoughts with other customers</p>
@@ -183,9 +183,8 @@ export default function ReviewsSection({ productId }) {
                 Write a Review
               </button>
             </div>
-          ) : (
+          ) : ( */}
             <>
-              {/* Show only the top 3 reviews initially */}
               <div className="divide-y">
                 {reviewData.reviews.slice(0, 3).map((review) => (
                   <ReviewItem key={review._id} review={review} />
@@ -204,7 +203,7 @@ export default function ReviewsSection({ productId }) {
                 </div>
               )}
             </>
-          )}
+          {/* )} */}
         </>
       )}
       
