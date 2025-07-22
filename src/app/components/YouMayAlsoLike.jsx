@@ -14,7 +14,7 @@ export default function YouMayAlsoLike({ currentProductId, category }) {
     const fetchRelatedProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/products?category=${category}&exclude=${currentProductId}&limit=8`);
+        const response = await fetch(`/api/collections?limit=10`);
         if (!response.ok) {
           throw new Error('Failed to fetch related products');
         }
