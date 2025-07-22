@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import useCartStore from '../../stores/cartStores'; // Import the Zustand cart store
-import { toast, Toaster } from 'react-hot-toast'; // For better notifications
+import useCartStore from '../../stores/cartStores';
+import { toast, Toaster } from 'react-hot-toast';
+import ReviewsSection from '../../components/ReviewsSection';
+import YouMayAlsoLike from '../../components/YouMayAlsoLike';
 
 export default function ProductPage() {
   const params = useParams();
@@ -19,13 +21,19 @@ export default function ProductPage() {
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('description');
+  const [selectedTab, setSelectedTab] = useState('information');
   const [selectedImage, setSelectedImage] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+  const [reviewSummary, setReviewSummary] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+    loading: true
+  });
   const allSizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   
-  // Get the addItem function from the Zustand cart store
   const { addItem } = useCartStore();
+  const imageContainerRef = useRef(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -49,7 +57,37 @@ export default function ProductPage() {
         setIsLoading(false);
       }
     };
+
+    const fetchReviewSummary = async () => {
+      try {
+        setReviewSummary(prev => ({ ...prev, loading: true }));
+        const response = await fetch(`/api/reviews/product/${params.id}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch reviews');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setReviewSummary({
+            averageRating: data.data.averageRating,
+            totalReviews: data.data.totalReviews,
+            loading: false
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching review summary:', error);
+        setReviewSummary({
+          averageRating: 0,
+          totalReviews: 0,
+          loading: false
+        });
+      }
+    };
+
     fetchProduct();
+    fetchReviewSummary();
   }, [params.id]);
 
   const formatPrice = (price) => {
@@ -63,15 +101,13 @@ export default function ProductPage() {
   };
 
   const addToCart = () => {
-    // Validate size selection
     if (!selectedSize && product.size?.length > 0) {
       toast.error('Please select a size');
       return;
     }
 
-    // Create item object with the structure expected by our cart store
     const cartItem = {
-      id: `${product._id}-${selectedSize}-${selectedColor}`, // Unique ID for each variant
+      id: `${product._id}-${selectedSize}-${selectedColor}`,
       productId: product._id,
       name: product.name,
       price: product.discountedPrice || product.originalPrice,
@@ -79,73 +115,118 @@ export default function ProductPage() {
       size: selectedSize,
       color: selectedColor,
       quantity: quantity,
-      maxQuantity: product.stock, // For inventory management
+      maxQuantity: product.stock,
+      customizable: product.customizable || false
     };
 
-    // Add to cart using Zustand store
     addItem(cartItem);
-
-    // Show success feedback
     setAddedToCart(true);
-    toast.success('Added to cart successfully!');
+    setShowNotification(true);
     
-    // Reset the added state after a delay
     setTimeout(() => {
       setAddedToCart(false);
     }, 2000);
+    
+    setTimeout(() => {
+      setShowNotification(false);
+    }, 3000);
   };
 
   const handleImageChange = (index) => {
+    if (index < 0) {
+      index = product.images.length - 1;
+    } else if (index >= product.images.length) {
+      index = 0;
+    }
     setSelectedImage(index);
   };
 
-  const buttonVariants = {
-    idle: { scale: 1 },
-    added: { scale: [1, 1.05, 1], transition: { duration: 0.3 } }
-  };
-
-  // Premium image fade variants
-  const fadeVariants = {
-    hidden: { opacity: 0 },
-    visible: { 
+  const crossfadeVariants = {
+    initial: { opacity: 0 },
+    enter: { 
       opacity: 1,
-      transition: { duration: 0.7, ease: "easeInOut" }
+      transition: { 
+        duration: 0.8,
+        ease: [0.22, 1, 0.36, 1]
+      }
     },
     exit: { 
       opacity: 0,
-      transition: { duration: 0.5, ease: "easeInOut" }
+      transition: { 
+        duration: 0.6,
+        ease: [0.22, 1, 0.36, 1]
+      }
     }
   };
+  
+  const zoomFadeVariants = {
+    initial: { 
+      opacity: 0,
+      scale: 1.05
+    },
+    enter: { 
+      opacity: 1,
+      scale: 1,
+      transition: { 
+        duration: 0.85,
+        ease: [0.22, 1, 0.36, 1]
+      }
+    },
+    exit: { 
+      opacity: 0,
+      transition: { 
+        duration: 0.5,
+        ease: [0.22, 1, 0.36, 1]
+      }
+    }
+  };
+  
+  const buttonVariants = {
+    idle: { scale: 1 },
+    added: { scale: [1, 1.05, 1], transition: { duration: 0.3 }}
+  };
+  
+  const notificationVariants = {
+    hidden: { y: -100, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 30 }},
+    exit: { y: -100, opacity: 0, transition: { duration: 0.3 }}
+  };
 
-  // Skeleton loader for product details
+  const nextImage = () => {
+    handleImageChange(selectedImage + 1);
+  };
+
+  const prevImage = () => {
+    handleImageChange(selectedImage - 1);
+  };
+
   const ProductSkeleton = () => (
-    <div className="space-y-6 animate-pulse">
-      <div className="h-8 bg-gray-200 rounded-md w-3/4"></div>
-      <div className="h-4 bg-gray-200 rounded-md w-1/2"></div>
-      <div className="h-10 bg-gray-200 rounded-md w-1/3 mt-6"></div>
+    <div className="space-y-8 animate-pulse">
+      <div className="h-10 bg-gray-100 rounded w-3/4"></div>
+      <div className="h-4 bg-gray-100 rounded w-1/2"></div>
+      <div className="h-12 bg-gray-100 rounded w-1/3 mt-8"></div>
       <div className="space-y-2">
-        <div className="h-4 bg-gray-200 rounded-md w-full"></div>
-        <div className="h-4 bg-gray-200 rounded-md w-full"></div>
-        <div className="h-4 bg-gray-200 rounded-md w-3/4"></div>
+        <div className="h-4 bg-gray-100 rounded w-full"></div>
+        <div className="h-4 bg-gray-100 rounded w-full"></div>
+        <div className="h-4 bg-gray-100 rounded w-3/4"></div>
       </div>
-      <div className="flex space-x-2 mt-6">
+      <div className="flex space-x-3 mt-8">
         {[1, 2, 3, 4].map((_, i) => (
-          <div key={i} className="w-10 h-10 rounded-full bg-gray-200"></div>
+          <div key={i} className="w-10 h-10 rounded-full bg-gray-100"></div>
         ))}
       </div>
-      <div className="grid grid-cols-6 gap-2 mt-4">
+      <div className="grid grid-cols-6 gap-3 mt-6">
         {[1, 2, 3, 4, 5, 6].map((_, i) => (
-          <div key={i} className="h-10 bg-gray-200 rounded-md"></div>
+          <div key={i} className="h-12 bg-gray-100 rounded"></div>
         ))}
       </div>
-      <div className="h-12 bg-gray-200 rounded-full w-full mt-6"></div>
+      <div className="h-14 bg-gray-100 rounded mt-8"></div>
     </div>
   );
 
-  // Render error state
   if (error) {
     return (
-      <div className="min-h-screen bg-[#f5f0e6] flex flex-col">
+      <div className="min-h-screen bg-white flex flex-col font-['Playfair_Display']">
         <Navbar />
         <div className="flex-1 flex items-center justify-center pt-20">
           <motion.div
@@ -154,9 +235,9 @@ export default function ProductPage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-4xl font-light text-gray-900 mb-6 tracking-tight">Product Not Found</h1>
-            <Link href="/collections" className="text-gray-900 font-light hover:text-amber-600 text-lg transition-colors duration-300">
-              Back to Collections
+            <h1 className="text-5xl font-light text-black mb-8 tracking-tight">Product Not Found</h1>
+            <Link href="/collections" className="text-black hover:text-gray-600 text-lg transition-colors duration-300 border-b border-black pb-1">
+              Return to Collections
             </Link>
           </motion.div>
         </div>
@@ -166,56 +247,113 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f0e6] font-sans">
+    <div className="min-h-screen bg-white font-['Inter'] text-black">
       <Navbar />
       <Toaster 
         position="top-center"
         toastOptions={{
           duration: 2000,
           style: {
-            background: '#333',
+            maxWidth: '90vw',
+            width: 'auto',
+            background: '#000',
             color: '#fff',
-            fontWeight: 300,
-          }
+            fontWeight: 400,
+            fontFamily: "'Inter', sans-serif",
+            padding: '0.75rem 1rem',
+            borderRadius: '0.375rem',
+            fontSize: '0.875rem',
+          },
         }}
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+      
+      <AnimatePresence>
+        {showNotification && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={notificationVariants}
+            className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-black text-white px-6 py-3 rounded-full shadow-lg max-w-[90vw] w-auto"
+          >
+            <div className="flex items-center space-x-2">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="whitespace-nowrap">Added to cart</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.nav
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex items-center space-x-2 text-sm font-light text-gray-600 mb-10"
+          className="flex items-center space-x-2 text-sm text-gray-500 mb-12"
         >
-          <Link href="/" className="hover:text-amber-600 transition-colors duration-300">Home</Link>
+          <Link href="/" className="hover:text-black transition-colors duration-300">Home</Link>
           <span>/</span>
-          <Link href="/collections" className="hover:text-amber-600 transition-colors duration-300">Collections</Link>
+          <Link href="/collections" className="hover:text-black transition-colors duration-300">Collections</Link>
           <span>/</span>
-          <span className="text-gray-900 font-light">{isLoading ? 'Loading...' : product?.name}</span>
+          <span className="text-black">{isLoading ? 'Loading...' : product?.name}</span>
         </motion.nav>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            {/* Main Product Image */}
-            <div className="aspect-w-3 aspect-h-4 bg-white rounded-2xl overflow-hidden shadow-lg">
+            <div ref={imageContainerRef} className="relative aspect-w-3 aspect-h-4 bg-[#f9f9f9] rounded-lg overflow-hidden group">
               {isLoading ? (
-                <div className="w-full h-full bg-gray-200 animate-pulse"></div>
+                <div className="w-full h-full bg-gray-100 animate-pulse"></div>
               ) : product?.images?.length > 0 ? (
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={selectedImage}
-                    initial="hidden"
-                    animate="visible"
-                    exit="exit"
-                    variants={fadeVariants}
-                    src={product.images[selectedImage]}
-                    alt={`${product.name} - Image ${selectedImage + 1}`}
-                    className="w-full h-full object-cover"
-                  />
-                </AnimatePresence>
+                <>
+                  <AnimatePresence initial={false} mode="wait">
+                    <motion.div
+                      key={selectedImage}
+                      initial="initial"
+                      animate="enter"
+                      exit="exit"
+                      variants={zoomFadeVariants}
+                      className="w-full h-full"
+                    >
+                      <img
+                        src={product.images[selectedImage]}
+                        alt={`${product.name} - Image ${selectedImage + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  
+                  <div className="absolute inset-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <button 
+                      onClick={prevImage}
+                      className="bg-white/90 backdrop-blur-sm text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                      aria-label="Previous image"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={nextImage}
+                      className="bg-white/90 backdrop-blur-sm text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-colors cursor-pointer transform hover:scale-105 transition-transform duration-300"
+                      aria-label="Next image"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs">
+                    {selectedImage + 1} / {product.images.length}
+                  </div>
+                </>
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gray-50">
                   <svg className="w-24 h-24 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,68 +363,74 @@ export default function ProductPage() {
               )}
             </div>
             
-            {/* Thumbnail Images - Positioned below main image */}
             {!isLoading && product?.images?.length > 1 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="grid grid-cols-5 gap-3"
+                className="grid grid-cols-5 gap-4"
               >
                 {product.images.map((img, index) => (
                   <button
                     key={index}
-                    onClick={() => handleImageChange(index)}
-                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all duration-500 
-                      ${selectedImage === index 
-                        ? 'border-gray-800 shadow-md scale-[1.02]' 
-                        : 'border-gray-200 hover:border-gray-400'}`}
+                    onClick={() => {
+                      setSelectedImage(index);
+                    }}
+                    className={`aspect-square overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 ${selectedImage === index 
+                      ? 'ring-2 ring-black' 
+                      : 'ring-1 ring-gray-200 hover:ring-gray-400'}`}
                   >
                     <img
                       src={img}
                       alt={`${product.name} thumbnail ${index + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-500"
+                      className="w-full h-full object-cover"
                     />
                   </button>
                 ))}
               </motion.div>
             )}
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-8"
+            className="space-y-10"
           >
             {isLoading ? (
               <ProductSkeleton />
             ) : (
               <>
                 <div>
-                  <div className="flex justify-between items-center">
-                    <h1 className="text-4xl font-light text-gray-900 tracking-tight leading-tight">
-                      {product.name || 'Belted Shearling Coat'}
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4">
+                    <h1 className="text-4xl sm:text-5xl font-['Playfair_Display'] tracking-tight leading-tight">
+                      {product.name}
                     </h1>
-                    {product.isActive && (
-                      <motion.span
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                        className="inline-block bg-gray-800 text-center text-white text-xs font-light uppercase px-4 py-2 rounded-full tracking-widest"
-                      >
-                        New Arrival
-                      </motion.span>
+                    
+                    {product.productTags?.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {product.productTags.map(tag => (
+                          <span 
+                            key={tag} 
+                            className="inline-block bg-white border border-black text-black text-xs uppercase px-4 py-1 rounded-full tracking-wider whitespace-nowrap"
+                          >
+                            {tag.replace(/-/g, ' ')}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 uppercase tracking-widest mt-3">
-                    {product.category?.name || 'Outerwear'} • {product.gender || 'Women'}'s
+                  
+                  <p className="text-sm text-gray-500 uppercase tracking-wider">
+                    {product.category?.name || 'Apparel'} • {product.gender || 'Unisex'}
                   </p>
+                  
                   <div className="flex items-center space-x-2 mt-3">
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
                         <svg
                           key={i}
-                          className={`w-5 h-5 ${i < Math.floor(4.9) ? 'text-amber-600' : 'text-gray-300'}`}
+                          className={`w-4 h-4 ${i < Math.floor(reviewSummary.averageRating) ? 'text-black' : 'text-gray-300'}`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -294,58 +438,92 @@ export default function ProductPage() {
                         </svg>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-600 font-light">4.9 (Based on reviews)</span>
+                    <span className="text-xs text-gray-500">
+                      {reviewSummary.averageRating} ({reviewSummary.totalReviews} {reviewSummary.totalReviews === 1 ? 'review' : 'reviews'})
+                    </span>
                   </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-3">
+                
+                <div className="pt-2">
+                  <div className="flex items-center space-x-4">
                     {product.discountedPrice ? (
                       <>
-                        <span className="text-3xl font-light text-gray-900 tracking-tight">
+                        <span className="text-3xl font-medium font-['Playfair_Display'] tracking-tight">
                           {formatPrice(product.discountedPrice)}
                         </span>
-                        <span className="text-lg text-gray-500 line-through font-light">
+                        <span className="text-lg text-gray-500 line-through">
                           {formatPrice(product.originalPrice)}
                         </span>
-                        <span className="bg-amber-600 text-white text-xs font-light text-center uppercase px-4 py-2 rounded-full tracking-widest">
+                        <span className="bg-black text-white text-center text-xs uppercase px-3 py-1 rounded-full tracking-wider">
                           {calculateDiscount(product.originalPrice, product.discountedPrice)}% OFF
                         </span>
                       </>
                     ) : (
-                      <span className="text-3xl font-light text-gray-900 tracking-tight">
-                        {formatPrice(product.originalPrice || 1400)}
+                      <span className="text-3xl font-medium font-['Playfair_Display'] tracking-tight">
+                        {formatPrice(product.originalPrice)}
                       </span>
                     )}
                   </div>
                 </div>
+                
+                {product.customizable && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-black/5 border border-black/20 rounded-md p-4 my-6"
+                  >
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 pt-0.5">
+                        <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-black mb-1">Customizable Product</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          This item can be customized to your preferences. Place your order normally, and after placing order you will be able to connect with us via WhatsApp to discuss your customization details.
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+                
                 <div className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded-full ${product.stock > 5 ? 'bg-emerald-600' : product.stock > 0 ? 'bg-amber-600' : 'bg-red-600'}`}></div>
-                  <span className="text-sm font-light text-gray-700 tracking-wide">
+                  <div className={`w-3 h-3 rounded-full ${product.stock > 5 ? 'bg-green-500' : product.stock > 0 ? 'bg-amber-500' : 'bg-red-500'}`}></div>
+                  <span className="text-sm text-gray-800">
                     {product.stock > 5 ? 'In Stock' : product.stock > 0 ? `Only ${product.stock} left` : 'Out of Stock'}
                   </span>
                 </div>
+                
                 {product.color?.length > 0 && (
                   <div className="space-y-4">
-                    <label className="text-sm font-light text-gray-900 tracking-wide">Color</label>
-                    <div className="flex gap-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-sm font-medium">COLOR</label>
+                      <span className="text-sm text-gray-600">{selectedColor}</span>
+                    </div>
+                    <div className="flex gap-3">
                       {product.color.map((color) => (
                         <button
                           key={color}
                           onClick={() => setSelectedColor(color)}
-                          className={`w-6 h-6 rounded-full border-2 ${selectedColor === color ? 'border-gray-400 ring-1 ring-gray-400' : 'border-gray-300'} hover:cursor-pointer transition-all duration-300`}
+                          className={`w-8 h-8 rounded-full border transition-all duration-300 cursor-pointer
+                            ${selectedColor === color ? 'ring-2 ring-black' : 'ring-1 ring-gray-300 hover:ring-gray-400'}`}
                           style={{ backgroundColor: color }}
+                          aria-label={color}
                         ></button>
                       ))}
                     </div>
                   </div>
                 )}
-                {allSizes && (
+                
+                {product.size?.length > 0 && (
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <label className="text-sm font-light text-gray-900 tracking-wide">Size</label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-sm font-medium">SIZE</label>
                       <button
                         onClick={() => setShowSizeGuide(true)}
-                        className="text-sm text-gray-600 font-light hover:text-amber-600 hover:cursor-pointer transition-colors duration-300 tracking-wide"
+                        className="text-sm underline underline-offset-4 hover:text-gray-600 transition-colors duration-300 cursor-pointer"
                       >
                         Size Guide
                       </button>
@@ -356,13 +534,12 @@ export default function ProductPage() {
                           key={size}
                           onClick={() => product.size.includes(size) && setSelectedSize(size)}
                           disabled={!product.size.includes(size)}
-                          className={`flex items-center justify-center h-10 sm:h-12 px-2 sm:px-4 border-2 rounded-md text-xs sm:text-sm font-light transition-all duration-300 ${
-                            !product.size.includes(size)
-                              ? 'line-through text-gray-400 cursor-not-allowed bg-gray-200'
+                          className={`h-12 flex items-center justify-center border transition-all duration-300 cursor-pointer
+                            ${!product.size.includes(size)
+                              ? 'opacity-40 cursor-not-allowed bg-gray-50 border-gray-200'
                               : selectedSize === size
-                              ? 'border-black bg-black text-white'
-                              : 'border-gray-300 bg-white text-gray-900 hover:bg-gray-100 hover:cursor-pointer'
-                          }`}
+                              ? 'bg-black text-white border-black'
+                              : 'border-gray-300 hover:border-black'}`}
                         >
                           {size}
                         </button>
@@ -370,91 +547,94 @@ export default function ProductPage() {
                     </div>
                   </div>
                 )}
+                
                 <div className="space-y-4">
-                  <label className="text-sm font-light text-gray-900 tracking-wide">Quantity</label>
-                  <div className="flex items-center space-x-4">
+                  <label className="text-sm font-medium">QUANTITY</label>
+                  <div className="flex items-center border border-gray-300 w-fit divide-x">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                      className="w-10 h-10 flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
+                      aria-label="Decrease quantity"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                       </svg>
                     </button>
-                    <span className="w-12 text-center font-light text-gray-900 text-lg tracking-wide">{quantity}</span>
+                    <span className="w-12 text-center font-medium text-gray-900">{quantity}</span>
                     <button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                      className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-900 hover:bg-gray-100 transition-all duration-300"
+                      className="w-10 h-10 flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
                       disabled={quantity >= product.stock}
+                      aria-label="Increase quantity"
                     >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
                     </button>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <motion.button
-                    onClick={addToCart}
-                    disabled={product.stock === 0}
-                    variants={buttonVariants}
-                    animate={addedToCart ? "added" : "idle"}
-                    className="w-full bg-black text-white py-3 rounded-full font-light text-sm uppercase tracking-widest hover:bg-gray-800 transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {product.stock === 0 ? 'Out of Stock' : addedToCart ? 'Added To Cart' : 'Add To Cart'}
-                  </motion.button>
-                </div>
-                <div className="border-t pt-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span className="text-gray-700 font-light tracking-wide">All Over Pakistan Shipping</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      <span className="text-gray-700 font-light tracking-wide">Hassle-Free Returns</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                      <span className="text-gray-700 font-light tracking-wide">Secure Checkout</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 12h.01" />
-                      </svg>
-                      <span className="text-gray-700 font-light tracking-wide">Premium Quality</span>
-                    </div>
+                
+                <motion.button
+                  onClick={addToCart}
+                  disabled={product.stock === 0}
+                  variants={buttonVariants}
+                  animate={addedToCart ? "added" : "idle"}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-black text-white py-4 text-sm uppercase tracking-widest hover:bg-gray-900 transition-all duration-300 disabled:bg-gray-300 disabled:cursor-not-allowed cursor-pointer"
+                >
+                  {product.stock === 0 ? 'Out of Stock' : addedToCart ? 'Added To Cart' : 'Add To Cart'}
+                </motion.button>
+                
+                <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+                    </svg>
+                    <span className="text-xs text-gray-700 tracking-wide">Free Shipping</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span className="text-xs text-gray-700 tracking-wide">Secure Checkout</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                    <span className="text-xs text-gray-700 tracking-wide">Premium Quality</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span className="text-xs text-gray-700 tracking-wide">Easy Returns</span>
                   </div>
                 </div>
               </>
             )}
           </motion.div>
         </div>
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-16 border-t pt-8"
+          className="mt-24 border-t border-gray-100 pt-10"
         >
-          <div className="flex overflow-x-auto space-x-8 border-b border-gray-200">
+          <div className="flex overflow-x-auto space-x-10 border-b border-gray-100 pb-1">
             {[
-              { id: 'description', label: 'Description' },
-              { id: 'details', label: 'Product Details' },
+              { id: 'information', label: 'Product Information' },
               { id: 'shipping', label: 'Shipping & Returns' },
               { id: 'reviews', label: 'Reviews' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setSelectedTab(tab.id)}
-                className={`whitespace-nowrap pb-4 text-sm font-light uppercase tracking-widest transition-all duration-300 ${selectedTab === tab.id
-                  ? 'border-gray-800 text-gray-900 border-b-2'
-                  : 'border-transparent text-gray-600 hover:text-amber-600'
+                className={`whitespace-nowrap pb-3 text-sm uppercase tracking-widest transition-all duration-300 cursor-pointer ${selectedTab === tab.id
+                  ? 'border-black text-black border-b-2 font-medium'
+                  : 'border-transparent text-gray-500 hover:text-black'
                 }`}
               >
                 {tab.label}
@@ -463,165 +643,320 @@ export default function ProductPage() {
           </div>
           <motion.div
             key={selectedTab}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mt-8"
+            initial="initial"
+            animate="enter"
+            exit="exit"
+            variants={crossfadeVariants}
+            className="py-8"
           >
-            {selectedTab === 'description' && !isLoading && (
-              <div className="prose max-w-none">
-                <p className="text-gray-700 leading-relaxed text-sm font-light tracking-wide">
-                  {product.description ||
-                    'Crafted from the finest shearling and wool, this belted coat combines timeless elegance with modern sophistication. Its lightweight yet warm construction, tonal fabric details, and ruched accents make it a luxurious addition to your winter wardrobe. Perfect for fall and winter, this coat offers both style and comfort.'}
-                </p>
-              </div>
-            )}
-            {selectedTab === 'details' && !isLoading && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-light text-gray-900 text-lg mb-4 tracking-tight">Product Information</h3>
-                  <dl className="space-y-3">
-                    <div className="flex">
-                      <dt className="w-24 text-sm text-gray-600 font-light tracking-wide">Category:</dt>
-                      <dd className="text-sm text-gray-700 capitalize font-light">{product.category?.name || 'Outerwear'}</dd>
-                    </div>
-                    <div className="flex">
-                      <dt className="w-24 text-sm text-gray-600 font-light tracking-wide">Gender:</dt>
-                      <dd className="text-sm text-gray-700 capitalize font-light">{product.gender || 'Women'}</dd>
-                    </div>
-                    {product.size?.length > 0 && (
-                      <div className="flex">
-                        <dt className="w-24 text-sm text-gray-600 font-light tracking-wide">Sizes:</dt>
-                        <dd className="text-sm text-gray-700 font-light">{product.size.join(', ')}</dd>
-                      </div>
-                    )}
-                    {product.color?.length > 0 && (
-                      <div className="flex">
-                        <dt className="w-24 text-sm text-gray-600 font-light tracking-wide">Colors:</dt>
-                        <dd className="text-sm text-gray-700 capitalize font-light">{product.color.join(', ')}</dd>
-                      </div>
-                    )}
-                  </dl>
-                </div>
-                <div>
-                  <h3 className="font-light text-gray-900 text-lg mb-4 tracking-tight">Care Instructions</h3>
-                  <ul className="text-sm text-gray-700 space-y-2 font-light">
-                    <li>• Dry clean only</li>
-                    <li>• Store in a cool, dry place</li>
-                    <li>• Avoid prolonged exposure to direct sunlight</li>
-                    <li>• Use a soft brush to remove surface dirt</li>
-                  </ul>
-                </div>
-              </div>
-            )}
-            {selectedTab === 'shipping' && !isLoading && (
+            {selectedTab === 'information' && !isLoading && (
               <div className="space-y-8">
-                <div>
-                  <h3 className="font-light text-gray-900 text-lg mb-4 tracking-tight">Shipping Information</h3>
-                  <ul className="text-sm text-gray-700 space-y-2 font-light">
-                    <li>• Complimentary shipping on all orders</li>
-                    <li>• Express shipping available for Rs 5000</li>
-                    <li>• Standard delivery: 5-7 business days</li>
-                    <li>• Express delivery: 1-3 business days</li>
-                  </ul>
+                <div className="max-w-3xl">
+                  <h3 className="font-['Playfair_Display'] text-lg mb-4 tracking-tight">Description</h3>
+                  <p className="text-gray-700 leading-relaxed tracking-wide">
+                    {product.description || 
+                      'Crafted with meticulous attention to detail, this exceptional piece embodies timeless elegance with a contemporary twist. The sophisticated silhouette is enhanced by premium materials, offering both luxurious comfort and striking visual appeal. Versatile in styling, this statement piece transitions effortlessly from day to evening, making it an essential addition to your wardrobe.'}
+                  </p>
+                  
+                  {product.customizable && (
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <h3 className="font-medium mb-2">Customization Options</h3>
+                      <p className="text-gray-700 leading-relaxed tracking-wide">
+                        This product offers personalization options. After placing your order, our team will reach out via WhatsApp to discuss your specific customization requirements including preferred design modifications, special embellishments, or personalization details.
+                      </p>
+                    </div>
+                  )}
                 </div>
-                <div>
-                  <h3 className="font-light text-gray-900 text-lg mb-4 tracking-tight">Returns & Exchanges</h3>
-                  <ul className="text-sm text-gray-700 space-y-2 font-light">
-                    <li>• 30-day return policy</li>
-                    <li>• Items must be unworn and in original packaging</li>
-                    <li>• Complimentary returns on all orders</li>
-                    <li>• Exchanges available for different sizes/colors, subject to availability</li>
+                
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <h3 className="font-['Playfair_Display'] text-lg mb-4 tracking-tight">Product Details</h3>
+                  <div className="overflow-hidden bg-white rounded-md">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <tbody className="divide-y divide-gray-200">
+                        <tr>
+                          <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50 w-1/4">Category</td>
+                          <td className="px-4 py-3 text-sm text-gray-700 capitalize">{product.category?.name || 'Apparel'}</td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Type</td>
+                          <td className="px-4 py-3 text-sm text-gray-700 capitalize">{product.type?.name || 'Standard'}</td>
+                        </tr>
+                        <tr>
+                          <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Gender</td>
+                          <td className="px-4 py-3 text-sm text-gray-700 capitalize">{product.gender || 'Unisex'}</td>
+                        </tr>
+                        {product.fabric && (
+                          <tr>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Fabric</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">{product.fabric}</td>
+                          </tr>
+                        )}
+                        {product.size?.length > 0 && (
+                          <tr>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Available Sizes</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">{product.size.join(', ')}</td>
+                          </tr>
+                        )}
+                        {product.color?.length > 0 && (
+                          <tr>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Available Colors</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 capitalize flex gap-2 items-center">
+                              {product.color.map(color => (
+                                <span 
+                                  key={color} 
+                                  className="inline-block w-4 h-4 rounded-full border border-gray-300" 
+                                  style={{ backgroundColor: color }}
+                                ></span>
+                              ))}
+                              <span>{product.color.join(', ')}</span>
+                            </td>
+                          </tr>
+                        )}
+                        {product.customizable && (
+                          <tr>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-500 bg-gray-50">Customizable</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">Yes</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                  <h3 className="font-['Playfair_Display'] text-lg mb-4 tracking-tight">Care Instructions</h3>
+                  <ul className="text-sm space-y-4 text-gray-700">
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Dry clean only</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Store in a cool, dry place</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Avoid prolonged exposure to direct sunlight</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Use a soft brush to remove surface dirt</span>
+                    </li>
                   </ul>
                 </div>
               </div>
             )}
-            {selectedTab === 'reviews' && !isLoading && (
-              <div className="text-center py-12">
-                <p className="text-gray-700 text-sm mb-6 font-light tracking-wide">
-                  Rated 4.9 stars by our customers. Share your experience!
-                </p>
-                <button
-                  className="w-full max-w-xs bg-black text-white py-3 rounded-full font-light text-sm uppercase tracking-widest hover:bg-gray-800 transition-all duration-300"
-                >
-                  Write a Review
-                </button>
+            
+            {selectedTab === 'shipping' && !isLoading && (
+              <div className="space-y-10">
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-lg mb-6 tracking-tight">Shipping Information</h3>
+                  <ul className="text-sm space-y-4 text-gray-700">
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Complimentary standard shipping on all orders within Pakistan</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Express shipping available for Rs 5000</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Standard delivery: 5-7 business days</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Express delivery: 1-3 business days</span>
+                    </li>
+                    {product.customizable && (
+                      <li className="flex items-center space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        <span>Customized products may require additional processing time</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-lg mb-6 tracking-tight">Returns & Exchanges</h3>
+                  <ul className="text-sm space-y-4 text-gray-700">
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>30-day return policy</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Items must be unworn and in original packaging with tags attached</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Complimentary returns on all orders</span>
+                    </li>
+                    <li className="flex items-center space-x-3">
+                      <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                      <span>Exchanges available for different sizes/colors, subject to availability</span>
+                    </li>
+                    {product.customizable && (
+                      <li className="flex items-center space-x-3">
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </span>
+                        <span>Customized items are non-returnable unless defective</span>
+                      </li>
+                    )}
+                  </ul>
+                </div>
               </div>
             )}
+            
+            {selectedTab === 'reviews' && !isLoading && product && (
+              <ReviewsSection productId={product._id} />
+            )}
+            
             {isLoading && (
               <div className="space-y-4 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded-md w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded-md w-full"></div>
-                <div className="h-4 bg-gray-200 rounded-md w-5/6"></div>
+                <div className="h-4 bg-gray-100 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-100 rounded w-full"></div>
+                <div className="h-4 bg-gray-100 rounded w-5/6"></div>
               </div>
             )}
           </motion.div>
         </motion.div>
+        
+        {!isLoading && product && (
+          <YouMayAlsoLike 
+            currentProductId={product._id} 
+            category={product.category?._id} 
+          />
+        )}
       </div>
+      
       {showSizeGuide && (
         <div className="fixed inset-0 flex items-center justify-center z-50 p-4 bg-black bg-opacity-50 backdrop-blur-sm">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-            className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{ duration: 0.4 }}
+            className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl"
           >
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-light text-gray-900 tracking-tight">Size Guide</h2>
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-8">
+                <h2 className="text-2xl font-medium font-['Playfair_Display']">Size Guide</h2>
                 <button
                   onClick={() => setShowSizeGuide(false)}
-                  className="text-gray-600 hover:text-amber-600 hover:cursor-pointer transition-colors duration-300"
+                  className="text-gray-500 hover:text-black transition-colors cursor-pointer"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm border-collapse">
+                <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-gray-300">
-                      <th className="text-left py-3 px-4 text-gray-900 font-light tracking-wide">Size</th>
-                      <th className="text-left py-3 px-4 text-gray-900 font-light tracking-wide">Chest (in)</th>
-                      <th className="text-left py-3 px-4 text-gray-900 font-light tracking-wide">Waist (in)</th>
-                      <th className="text-left py-3 px-4 text-gray-900 font-light tracking-wide">Hip (in)</th>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 font-medium">Size</th>
+                      <th className="text-left py-3 px-4 font-medium">Chest (in)</th>
+                      <th className="text-left py-3 px-4 font-medium">Waist (in)</th>
+                      <th className="text-left py-3 px-4 font-medium">Hip (in)</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 text-gray-700 font-light">Small</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">34-36</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">28-30</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">36-38</td>
+                    <tr className="border-b">
+                      <td className="py-3 px-4">XS</td>
+                      <td className="py-3 px-4">32-34</td>
+                      <td className="py-3 px-4">26-28</td>
+                      <td className="py-3 px-4">34-36</td>
                     </tr>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 text-gray-700 font-light">Medium</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">36-38</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">30-32</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">38-40</td>
+                    <tr className="border-b">
+                      <td className="py-3 px-4">S</td>
+                      <td className="py-3 px-4">34-36</td>
+                      <td className="py-3 px-4">28-30</td>
+                      <td className="py-3 px-4">36-38</td>
                     </tr>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 text-gray-700 font-light">Large</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">38-40</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">32-34</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">40-42</td>
+                    <tr className="border-b">
+                      <td className="py-3 px-4">M</td>
+                      <td className="py-3 px-4">36-38</td>
+                      <td className="py-3 px-4">30-32</td>
+                      <td className="py-3 px-4">38-40</td>
                     </tr>
-                    <tr className="border-b border-gray-200">
-                      <td className="py-3 px-4 text-gray-700 font-light">Extra-Large</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">40-42</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">34-36</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">42-44</td>
+                    <tr className="border-b">
+                      <td className="py-3 px-4">L</td>
+                      <td className="py-3 px-4">38-40</td>
+                      <td className="py-3 px-4">32-34</td>
+                      <td className="py-3 px-4">40-42</td>
+                    </tr>
+                    <tr className="border-b">
+                      <td className="py-3 px-4">XL</td>
+                      <td className="py-3 px-4">40-42</td>
+                      <td className="py-3 px-4">34-36</td>
+                      <td className="py-3 px-4">42-44</td>
                     </tr>
                     <tr>
-                      <td className="py-3 px-4 text-gray-700 font-light">Extra-Extra-Large</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">42-44</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">36-38</td>
-                      <td className="py-3 px-4 text-gray-700 font-light">44-46</td>
+                      <td className="py-3 px-4">XXL</td>
+                      <td className="py-3 px-4">42-44</td>
+                      <td className="py-3 px-4">36-38</td>
+                      <td className="py-3 px-4">44-46</td>
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              <div className="mt-6 text-sm text-gray-600">
+                <p>This size chart is a general guide. Fit may vary depending on the construction, materials, and manufacturer.</p>
               </div>
             </div>
           </motion.div>
