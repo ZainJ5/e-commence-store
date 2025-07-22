@@ -6,17 +6,19 @@ import FeaturedProducts from './components/FeaturedProducts';
 import Footer from './components/Footer';
 import HolidaySaleBanner from './components/HolidaySaleBanner';
 import TopDiscountBanner from './components/DiscountSection';
+import MrShahCollection from './components/MrShahCollection';
 
 
 export default function Home() {
   return (
-    <div className="min-h-screen   bg-[rgb(240,230,210)]">
+    <div className="min-h-screen text-black bg-white">
       <Navbar />
       <HeroSection />
       {/* <GallerySection/> */}
       <ProductsSection/>
       <LatestArrivalsSection/>
       <FeaturedProducts />
+      <MrShahCollection/>
       <div className='pb-4 md:p-6'>
       <HolidaySaleBanner />
       </div>
