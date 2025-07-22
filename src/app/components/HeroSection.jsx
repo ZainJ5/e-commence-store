@@ -61,38 +61,61 @@ const HeroSection = () => {
     <div
       className="relative w-full overflow-hidden"
       style={{
-        height: 'min(90vh, 800px)',
-        minHeight: '400px',
         '--desktop-height': '95vh',
       }}
     >
       <style jsx>{`
-        @media (min-width: 768px) {
+        /* Desktop aspect ratio (2.611) based on 1880x720 */
+        .hero-container {
+          aspect-ratio: 2.611111111111111;
+          max-height: 90vh;
+          width: 100%;
+        }
+        
+        /* Mobile aspect ratio (0.874) based on 800x915 */
+        @media (max-width: 767px) {
           .hero-container {
-            height: var(--desktop-height) !important;
-            min-height: 900px !important;
+            aspect-ratio: 0.8743169398907104;
+            max-height: none;
+            height: auto;
           }
         }
 
-        /* Maintain aspect ratio for the banners based on 4096x1568 */
-        .banner-container {
-          aspect-ratio: 4096/1568;
-          max-height: 100vh;
-        }
-
-        @media (max-aspect-ratio: 4096/1568) {
-          .banner-container {
-            height: 100%;
-            width: auto;
+        /* For very tall screens, cap the height */
+        @media (min-width: 768px) and (min-height: 900px) {
+          .hero-container {
+            max-height: 90vh;
+            height: auto;
           }
+        }
+        
+        /* Banner image fill settings */
+        .banner-image {
+          position: absolute;
+          height: 100%;
+          width: 100%;
+          top: 0;
+          left: 0;
+          object-fit: contain;
+        }
+        
+        /* Control positioning adjustments */
+        .slider-controls {
+          position: absolute;
+          bottom: 20px;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          z-index: 20;
         }
       `}</style>
 
-      <div className="absolute inset-0 w-full h-full hero-container">
+      <div className="hero-container">
         {banners.map((banner, index) => (
           <div 
             key={index} 
-            className={`absolute inset-0 h-full transition-opacity duration-1000 ease-in-out banner-container ${
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
               currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
             }`}
           >
@@ -102,8 +125,7 @@ const HeroSection = () => {
               fill
               priority={index === 0}
               sizes="(max-width: 768px) 100vw, 100vw"
-              className="object-cover"
-              style={{ objectPosition: 'center center' }}
+              className="banner-image"
               quality={90}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20"></div>
@@ -131,7 +153,7 @@ const HeroSection = () => {
         </svg>
       </button>
       
-      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center space-x-2">
+      <div className="slider-controls space-x-2">
         {banners.map((_, index) => (
           <button
             key={index}
