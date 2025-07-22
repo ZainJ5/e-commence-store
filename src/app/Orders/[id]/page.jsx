@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter, useParams } from 'next/navigation';
-import useOrderStore from '../stores/orderStore';
+import useOrderStore from '../../stores/orderStore';
 import { ArrowLeft, Mail, Phone } from 'lucide-react';
 import Image from 'next/image';
 
