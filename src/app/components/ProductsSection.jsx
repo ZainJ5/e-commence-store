@@ -118,7 +118,7 @@ export default function ProductsSection() {
   };
 
   return (
-    <section className="py-16 lg:py-20 bg-[rgb(240,230,210)]">
+    <section className="py-16 lg:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-12">
           <div className="text-center lg:text-left">
@@ -131,7 +131,7 @@ export default function ProductsSection() {
             </p>
 
             <div className="flex justify-center lg:justify-start">
-              <div className="relative inline-flex bg-white/50 rounded-full p-1 backdrop-blur-sm">
+              <div className="relative inline-flex bg-gray-100 rounded-full p-1">
                 <div
                   className="absolute top-1 h-[calc(100%-8px)] bg-black rounded-full transition-all duration-300 ease-in-out"
                   style={{
@@ -209,6 +209,7 @@ export default function ProductsSection() {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
     scroll-behavior: smooth;
+    padding-bottom: 8px;
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
@@ -250,6 +251,11 @@ export default function ProductsSection() {
   .product-card {
     display: flex;
     flex-direction: column;
+    transition: all 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
   }
   
   .product-image-container {
@@ -260,10 +266,8 @@ export default function ProductsSection() {
   }
   
   .product-info {
-    height: 80px; /* Fixed height for product info */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
   
   .product-name {
@@ -272,30 +276,30 @@ export default function ProductsSection() {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    margin-bottom: 0;
   }
 `}</style>
 
-            <div className="flex gap-3 sm:gap-4 lg:gap-8 pb-4" style={{ width: 'max-content' }}>
+            <div className="flex gap-4 lg:gap-6 pb-4" style={{ width: 'max-content' }}>
               {filteredProducts.map((product, index) => (
                 <div
                   key={product._id}
-                  className="product-card flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-80 staggered-animation"
+                  className="product-card flex-shrink-0 w-48 sm:w-56 md:w-64 lg:w-72 staggered-animation"
                   style={{
                     animationDelay: `${index * 0.1}s`,
                     animationFillMode: 'both',
-                    height: 'auto' // Let height be determined by fixed child elements
                   }}
                 >
-                  <div className="relative mb-3 cursor-pointer bg-white rounded-lg overflow-hidden shadow-sm"
-                    onClick={() => window.location.href = `/products/${product._id}`}>
-
-                    {/* Fixed aspect ratio container */}
+                  <div 
+                    className="relative mb-3 cursor-pointer bg-white rounded-lg overflow-hidden border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-300"
+                    onClick={() => window.location.href = `/products/${product._id}`}
+                  >
                     <div className="aspect-square w-full overflow-hidden bg-gray-50">
                       {product.images && product.images.length > 0 ? (
                         <img
                           src={product.images[0]}
                           alt={product.name}
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-full object-cover object-top transform transition-transform duration-500"
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
@@ -307,7 +311,7 @@ export default function ProductsSection() {
                     </div>
 
                     {product.discountedPrice && product.discountedPrice < product.originalPrice && (
-                      <div className="absolute top-2 right-2 bg-red-500 text-white text-sm font-semibold px-3 py-1 rounded-full shadow">
+                      <div className="absolute top-3 left-3 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow">
                         {calculateDiscount(product.originalPrice, product.discountedPrice)}
                       </div>
                     )}
@@ -316,11 +320,10 @@ export default function ProductsSection() {
                         e.stopPropagation();
                         toggleWishlist(product._id);
                       }}
-                      className="absolute top-3 right-3 p-2 bg-gray-50 hover:bg-gray-200 rounded-full transition-colors duration-200 shadow-sm"
-                      style={{ display: 'none' }}
+                      className="absolute top-3 right-3 p-2 bg-white/70 backdrop-blur-sm hover:bg-white rounded-full transition-colors duration-200 shadow opacity-0 group-hover:opacity-100"
                     >
                       <svg
-                        className={`w-4 h-5 text-gray-600 ${wishlist.includes(product._id) ? 'text-red-500' : ''}`}
+                        className={`w-4 h-4 ${wishlist.includes(product._id) ? 'text-red-500' : 'text-gray-600'}`}
                         fill={wishlist.includes(product._id) ? 'currentColor' : 'none'}
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -329,16 +332,15 @@ export default function ProductsSection() {
                       </svg>
                     </button>
                   </div>
-                  {/* Product Info with fixed height */}
-                  <div className="text-center h-20 flex flex-col justify-between">
+                  
+                  <div className="text-center">
                     <Link href={`/products/${product._id}`}>
-                      <h3 className="text-xs sm:text-sm font-medium text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-2 product-name"
+                      <h3 className="text-m sm:text-m font-medium pb-2 text-gray-900 hover:text-gray-700 transition-colors duration-200 uppercase tracking-wide line-clamp-1 product-name mb-1"
                         style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
                         {product.name}
                       </h3>
                     </Link>
 
-                    {/* Price */}
                     <div className="flex justify-center items-center space-x-2">
                       {product.discountedPrice && product.discountedPrice < product.originalPrice ? (
                         <>
@@ -352,7 +354,7 @@ export default function ProductsSection() {
 
                     {/* Stock Status */}
                     {(product.stock === 0 || (product.stock > 0 && product.stock <= 5)) && (
-                      <div className="text-xs">
+                      <div className="text-xs mt-1">
                         <span className={`${product.stock === 0 ? 'text-red-600' : 'text-yellow-600'} font-medium`}>
                           {product.stock === 0 ? 'Out of stock' : `Only ${product.stock} left`}
                         </span>
@@ -365,16 +367,15 @@ export default function ProductsSection() {
           </div>
         )}
 
-        {/* View All New Arrivals Link */}
         {filteredProducts.length > 0 && (
-          <div className="text-center mt-8">
+          <div className="text-center mt-10">
             <Link
               href="/collections/new-arrival"
-              className="inline-flex items-center text-black border-b border-black pb-1 hover:text-gray-600 hover:border-gray-600 transition-colors duration-200 text-sm font-medium"
+              className="inline-flex items-center text-black border border-black px-6 py-2 rounded hover:bg-black hover:text-white transition-colors duration-300 text-sm font-medium group"
               style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}
             >
               View All New Arrivals
-              <svg className="w-5 h-5 ml-2 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 ml-2 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
