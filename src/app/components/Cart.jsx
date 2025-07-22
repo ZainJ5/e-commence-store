@@ -119,7 +119,7 @@ const Cart = ({ isOpen, onClose }) => {
                               alt={item.name}
                               fill
                               sizes="80px"
-                              className="object-cover object-center"
+                              className="object-cover object-top"
                             />
                           ) : (
                             <div className="absolute inset-0 flex items-center justify-center text-gray-400">

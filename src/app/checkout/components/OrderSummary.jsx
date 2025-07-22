@@ -179,7 +179,7 @@ const OrderItem = ({ item, formatPrice }) => (
           src={item.image}
           alt={item.name}
           fill
-          className="object-cover object-center"
+          className="object-cover object-top"
           sizes="64px"
           onError={(e) => {
             e.target.style.display = 'none';
