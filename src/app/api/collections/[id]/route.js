@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
   try {
     await connectToDatabase();
     
-    const collectionId = params.id;
+    const { id: collectionId } = await params;
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
