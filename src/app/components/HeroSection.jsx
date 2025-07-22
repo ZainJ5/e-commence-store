@@ -3,11 +3,26 @@ import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
 const HeroSection = () => {
+  const [currentBanner, setCurrentBanner] = useState(0);
   const initialHeightSet = useRef(false);
+  
+  const banners = [
+    {
+      src: '/banner-1.jpg',
+      alt: 'Banner 1',
+    },
+    {
+      src: '/banner-2.jpg',
+      alt: 'Banner 2',
+    },
+    {
+      src: '/banner-3.jpg',
+      alt: 'Banner 3',
+    }
+  ];
 
   useEffect(() => {
     const setVH = () => {
-      // Only set the height on initial load and genuine resize events, not during scroll
       if (!initialHeightSet.current || window.innerWidth !== window.lastWidth) {
         window.lastWidth = window.innerWidth;
         const vh = window.innerHeight * 0.01;
@@ -17,8 +32,6 @@ const HeroSection = () => {
     };
 
     setVH();
-    
-    // Use passive event listeners to improve performance
     window.addEventListener('resize', setVH, { passive: true });
     window.addEventListener('orientationchange', setVH, { passive: true });
 
@@ -28,70 +41,109 @@ const HeroSection = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBanner((prev) => (prev + 1) % banners.length);
+    }, 5000); // Change banner every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const goToPrevBanner = () => {
+    setCurrentBanner((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
+  const goToNextBanner = () => {
+    setCurrentBanner((prev) => (prev + 1) % banners.length);
+  };
+
   return (
-    <div className="relative w-full overflow-hidden pt-24 lg:pt-20 xl:pt-16" 
-         style={{
-           height: 'calc(var(--vh, 1vh) * 100 - 6rem)',
-           willChange: 'auto', // Optimization for mobile rendering
-         }}
+    <div
+      className="relative w-full overflow-hidden"
+      style={{
+        height: 'min(90vh, 800px)',
+        minHeight: '400px',
+        '--desktop-height': '95vh',
+      }}
     >
-      {/* Image container */}
-      <div className="absolute inset-0 w-full h-full">
-        {/* Mobile image */}
-        <div className="relative w-full h-full md:hidden">
-          <Image
-            src="/hero-section-mobile.jpg"
-            alt="Fashion store elegant clothing collection - mobile view"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover" 
-            style={{ objectPosition: 'center top' }}
-            quality={95}
-          />
-        </div>
-        
-        {/* Desktop image */}
-        <div className="relative hidden w-full h-full md:block">
-          <Image
-            src="/hero-section-2.jpg"
-            alt="Fashion store elegant clothing collection - desktop view"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-            style={{ objectPosition: 'center top' }}
-            quality={95}
-          />
-        </div>
-        
-        {/* Enhanced overlay with subtle gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70"></div>
+      <style jsx>{`
+        @media (min-width: 768px) {
+          .hero-container {
+            height: var(--desktop-height) !important;
+            min-height: 900px !important;
+          }
+        }
+
+        /* Maintain aspect ratio for the banners based on 4096x1568 */
+        .banner-container {
+          aspect-ratio: 4096/1568;
+          max-height: 100vh;
+        }
+
+        @media (max-aspect-ratio: 4096/1568) {
+          .banner-container {
+            height: 100%;
+            width: auto;
+          }
+        }
+      `}</style>
+
+      <div className="absolute inset-0 w-full h-full hero-container">
+        {banners.map((banner, index) => (
+          <div 
+            key={index} 
+            className={`absolute inset-0 h-full transition-opacity duration-1000 ease-in-out banner-container ${
+              currentBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          >
+            <Image
+              src={banner.src}
+              alt={banner.alt}
+              fill
+              priority={index === 0}
+              sizes="(max-width: 768px) 100vw, 100vw"
+              className="object-cover"
+              style={{ objectPosition: 'center center' }}
+              quality={90}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20"></div>
+          </div>
+        ))}
       </div>
       
-      {/* Content container with height adjustments based on screen size */}
-      <div className="relative w-full h-full flex flex-col justify-center items-center text-center px-6 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-xs md:text-sm uppercase tracking-[0.4em] text-emerald-300 mb-6 md:mb-8 font-light animate-fadeIn" style={{ animationDelay: '0.3s' }}>
-            Couture Collection
-          </p>
-          
-          <h1 className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-9xl font-thin leading-[0.9] mb-8 md:mb-10 tracking-tight animate-fadeIn" style={{ color: 'rgb(240, 230, 210)', animationDelay: '0.6s' }}>
-            Timeless
-            <br />
-            <span className="font-extralight italic">Elegance</span>
-          </h1>
-          
-          <p className="text-xl md:text-2xl max-w-2xl mx-auto mb-10 md:mb-12 lg:mb-16 font-light leading-relaxed animate-fadeIn" style={{ color: 'rgba(240, 230, 210, 0.9)', animationDelay: '0.9s' }}>
-            Where sophistication meets artistry
-          </p>
-          
-          <div className="animate-fadeIn" style={{ animationDelay: '1.2s' }}>
-            <button className="bg-transparent border border-emerald-400/30 px-8 sm:px-12 py-3 sm:py-4 font-light text-base sm:text-lg tracking-wider uppercase hover:bg-emerald-700/30 transition-all duration-500 backdrop-blur-sm" style={{ color: 'rgb(240, 230, 210)' }}>
-              Explore Collection
-            </button>
-          </div>
-        </div>
+      <button 
+        onClick={goToPrevBanner}
+        className="absolute left-4 md:left-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+        aria-label="Previous banner"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      
+      <button 
+        onClick={goToNextBanner}
+        className="absolute right-4 md:right-8 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 hover:bg-black/40 text-white rounded-full p-2 md:p-3 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white"
+        aria-label="Next banner"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 md:h-8 md:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+      
+      <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center space-x-2">
+        {banners.map((_, index) => (
+          <button
+            key={index}
+            className={`w-2 h-2 rounded-full transition-all ${
+              currentBanner === index 
+                ? 'bg-white w-4' 
+                : 'bg-white/60 hover:bg-white/80'
+            }`}
+            onClick={() => setCurrentBanner(index)}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
     </div>
   );
