@@ -1,3 +1,5 @@
+"use client";
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -9,69 +11,94 @@ const useCartStore = create(
       totalPrice: 0,
       
       addItem: (item) => {
-        const currentItems = get().items;
-        const existingItem = currentItems.find((i) => i.id === item.id);
-        
-        if (existingItem) {
-          const updatedItems = currentItems.map((i) =>
-            i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-          );
+        set((state) => {
+          const existingItem = state.items.find((i) => i.id === item.id);
           
-          set((state) => ({
-            items: updatedItems,
-            totalItems: state.totalItems + 1,
-            totalPrice: state.totalPrice + item.price,
-          }));
-        } else {
-          set((state) => ({
-            items: [...state.items, { ...item, quantity: 1 }],
-            totalItems: state.totalItems + 1,
-            totalPrice: state.totalPrice + item.price,
-          }));
-        }
+          if (existingItem) {
+            return {
+              items: state.items.map((i) =>
+                i.id === item.id
+                  ? { ...i, quantity: i.quantity + item.quantity }
+                  : i
+              ),
+              totalItems: state.totalItems + item.quantity,
+              totalPrice: state.totalPrice + (item.price * item.quantity),
+            };
+          }
+          
+
+          const newItem = {
+            ...item,
+            customizable: typeof item.customizable === 'boolean' ? item.customizable : false
+          };
+          
+          console.log("Adding item to cart with customizable:", newItem.customizable);
+          
+          return {
+            items: [...state.items, newItem],
+            totalItems: state.totalItems + item.quantity,
+            totalPrice: state.totalPrice + (item.price * item.quantity),
+          };
+        });
       },
       
       removeItem: (itemId) => {
-        const currentItems = get().items;
-        const itemToRemove = currentItems.find((i) => i.id === itemId);
-        
-        if (!itemToRemove) return;
-        
-        set((state) => ({
-          items: state.items.filter((i) => i.id !== itemId),
-          totalItems: state.totalItems - itemToRemove.quantity,
-          totalPrice: state.totalPrice - (itemToRemove.price * itemToRemove.quantity),
-        }));
+        set((state) => {
+          const item = state.items.find((i) => i.id === itemId);
+          if (!item) return state;
+          
+          return {
+            items: state.items.filter((i) => i.id !== itemId),
+            totalItems: state.totalItems - item.quantity,
+            totalPrice: state.totalPrice - (item.price * item.quantity),
+          };
+        });
       },
       
-      updateQuantity: (itemId, quantity) => {
-        if (quantity < 1) return;
-        
-        const currentItems = get().items;
-        const itemToUpdate = currentItems.find((i) => i.id === itemId);
-        
-        if (!itemToUpdate) return;
-        
-        const quantityDifference = quantity - itemToUpdate.quantity;
-        
-        const updatedItems = currentItems.map((i) =>
-          i.id === itemId ? { ...i, quantity } : i
-        );
-        
-        set((state) => ({
-          items: updatedItems,
-          totalItems: state.totalItems + quantityDifference,
-          totalPrice: state.totalPrice + (itemToUpdate.price * quantityDifference),
-        }));
+      updateItemQuantity: (itemId, quantity) => {
+        set((state) => {
+          const item = state.items.find((i) => i.id === itemId);
+          if (!item) return state;
+          
+          const quantityDifference = quantity - item.quantity;
+          
+          return {
+            items: state.items.map((i) =>
+              i.id === itemId ? { ...i, quantity } : i
+            ),
+            totalItems: state.totalItems + quantityDifference,
+            totalPrice: state.totalPrice + (item.price * quantityDifference),
+          };
+        });
       },
       
       clearCart: () => {
-        set({ items: [], totalItems: 0, totalPrice: 0 });
+        set({
+          items: [],
+          totalItems: 0,
+          totalPrice: 0,
+        });
       },
+      
+      getCartItemCount: () => {
+        return get().totalItems;
+      },
+      
+      getCartTotal: () => {
+        return get().totalPrice;
+      },
+      
+      hasItems: () => {
+        return get().items.length > 0;
+      },
+      
+      getItem: (itemId) => {
+        return get().items.find((item) => item.id === itemId);
+      }
     }),
     {
-      name: 'cart-storage', 
-      getStorage: () => (typeof window !== 'undefined' ? window.localStorage : null),
+      name: 'cart-storage',
+      getStorage: () => (typeof window !== 'undefined' ? localStorage : null),
     }
   )
 );
