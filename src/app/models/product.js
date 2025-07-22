@@ -43,6 +43,14 @@ const ProductSchema = new mongoose.Schema({
     enum: ['men', 'women', 'kids', 'unisex'],
     default: 'unisex'
   },
+  fabric: {
+    type: String,
+    maxlength: [100, 'Fabric name cannot be more than 100 characters']
+  },
+  customizable: {
+    type: Boolean,
+    default: false
+  },
   images: {
     type: [String],
     default: [],
