@@ -112,7 +112,7 @@ export default function YouMayAlsoLike({ currentProductId, category }) {
                             <img 
                               src={product.images[0]} 
                               alt={product.name}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover object-top"
                             />
                             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
                           </>

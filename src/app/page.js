@@ -12,6 +12,7 @@ import MrShahCollection from './components/MrShahCollection';
 export default function Home() {
   return (
     <div className="min-h-screen text-black bg-white">
+      <TopDiscountBanner/>
       <Navbar />
       <HeroSection />
       {/* <GallerySection/> */}
