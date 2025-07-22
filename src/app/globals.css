@@ -25,14 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Add this in your globals.css or Tailwind config file if using Tailwind */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;  
+  scrollbar-width: none;     
 }
 
 
@@ -50,4 +49,34 @@ body {
 
 .animate-fadeIn {
   animation: fadeIn 1s ease-out forwards;
+}
+
+
+
+:root {
+  --font-serif: 'Playfair Display', serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    @apply antialiased text-gray-900 bg-white;
+  }
+  
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+  
+  .font-inter {
+    font-family: var(--font-inter);
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+  }
 }
