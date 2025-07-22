@@ -1,14 +1,30 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function LatestArrivalsSection() {
-  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCollection, setActiveCollection] = useState(null);
 
-  const categories = ['Shirts', 'Shorts', 'Jackets', 'Hoodies', 'Trousers'];
+  const collections = [
+    { name: 'Men', path: '/collections/men' },
+    { name: 'Women', path: '/collections/women' },
+    { name: 'Kids', path: '/collections/kids' },
+    { name: 'Customizable', path: '/collections/customizable' },
+    { name: 'Mr Shah Collection', path: '/collections/mr-shah-collection' }
+  ];
   
-  const midRangeCategories = ['Shirts', 'Shorts', 'Jackets', 'Hoodies'];
+  const midRangeCollections = [
+    { name: 'Men', path: '/collections/men' },
+    { name: 'Women', path: '/collections/women' },
+    { name: 'Kids', path: '/collections/kids' },
+    { name: 'Customizable', path: '/collections/customizable' }
+  ];
   
-  const smallCategories = ['Shirts', 'Jackets', 'Trousers'];
+  const smallCollections = [
+    { name: 'Men', path: '/collections/men' },
+    { name: 'Women', path: '/collections/women' },
+    { name: 'Kids', path: '/collections/kids' }
+  ];
 
   return (
     <section className="relative w-full bg-[rgb(240,230,210)] md:w-[95%] overflow-hidden rounded-l-none sm:rounded-3xl ml-0 sm:m-auto">
@@ -28,63 +44,61 @@ export default function LatestArrivalsSection() {
         ></div>
       </div>
 
-      {/* Dark Overlay for text visibility */}
       <div className="absolute inset-0 bg-black/60 z-0"></div>
 
       <div className="relative z-10 flex flex-col justify-center items-center min-h-[40vh] xs:min-h-[50vh] sm:min-h-[60vh] md:min-h-[80vh] w-full px-4 sm:px-6 py-6 sm:py-10 md:py-16">
-        {/* Heading */}
-        <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-[rgb(240,230,210)] mb-10 sm:mb-14 text-center drop-shadow-2xl">
-          Latest Arrivals
+        <h2 className="text-3xl xs:text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-10 sm:mb-14 text-center drop-shadow-2xl">
+          Our Collections
         </h2>
 
-        {/* Small devices (mobile) */}
         <div className="w-full sm:hidden flex justify-center gap-6">
-          {smallCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
+          {smallCollections.map((collection) => (
+            <Link
+              key={collection.name}
+              href={collection.path}
+              onClick={() => setActiveCollection(collection.name)}
               className={`text-base font-serif tracking-wide transition-all duration-300 relative pb-1 ${
-                activeCategory === category
-                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
-                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
+                activeCollection === collection.name
+                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
+                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
               }`}
             >
-              {category}
-            </button>
+              {collection.name}
+            </Link>
           ))}
         </div>
 
-        {/* Mid-range devices */}
         <div className="w-full hidden sm:flex md:hidden justify-center gap-8">
-          {midRangeCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
+          {midRangeCollections.map((collection) => (
+            <Link
+              key={collection.name}
+              href={collection.path}
+              onClick={() => setActiveCollection(collection.name)}
               className={`text-lg font-serif tracking-wide transition-all duration-300 relative pb-1 ${
-                activeCategory === category
-                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
-                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
+                activeCollection === collection.name
+                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
+                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
               }`}
             >
-              {category}
-            </button>
+              {collection.name}
+            </Link>
           ))}
         </div>
 
-        {/* Desktop view */}
-        <div className="hidden md:flex justify-center gap-12 lg:gap-16">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveCategory(category)}
+        <div className="hidden md:flex justify-center gap-12 lg:gap-16 flex-wrap">
+          {collections.map((collection) => (
+            <Link
+              key={collection.name}
+              href={collection.path}
+              onClick={() => setActiveCollection(collection.name)}
               className={`text-xl lg:text-2xl font-serif tracking-wide transition-all duration-300 relative pb-1 ${
-                activeCategory === category
-                  ? 'text-[rgb(240,230,210)] font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-[rgb(240,230,210)]'
-                  : 'text-[rgb(240,230,210)]/90 hover:text-[rgb(240,230,210)] hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-[rgb(240,230,210)]/60'
+                activeCollection === collection.name
+                  ? 'text-white font-medium after:content-[""] after:absolute after:left-0 after:bottom-0 after:w-full after:h-[1px] after:bg-white'
+                  : 'text-white/90 hover:text-white hover:after:content-[""] hover:after:absolute hover:after:left-0 hover:after:bottom-0 hover:after:w-full hover:after:h-[1px] hover:after:bg-white/60'
               }`}
             >
-              {category}
-            </button>
+              {collection.name}
+            </Link>
           ))}
         </div>
       </div>
